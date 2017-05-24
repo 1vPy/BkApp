@@ -1,7 +1,7 @@
 # BkApp
 一款影讯查看app
 
-app截图
+app截图  
 ![image](https://github.com/1vPy/BkApp/blob/master/g1.gif)
 
 
