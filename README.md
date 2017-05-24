@@ -2,10 +2,10 @@
 一款影讯查看app
 
 app截图
-![image](https://github.com/1vPy/BkApp/g1.gif)
-  
+![image](https://github.com/1vPy/BkApp/blob/master/g1.gif)
 
-![image](https://github.com/1vPy/BkApp/g2.gif)
+
+![image](https://github.com/1vPy/BkApp/blob/master/g2.gif)
 
 
 使用到  
