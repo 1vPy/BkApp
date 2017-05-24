@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="分类">
+        <menu>
+            <item
+                android:id="@+id/item_movie"
+                android:icon="@drawable/icon_movie"
+                android:title="电影" />
+
+            <item
+                android:id="@+id/item_music"
+                android:icon="@drawable/icon_music"
+                android:title="音乐" />
+        </menu>
+    </item>
+    <item android:title="选项">
+        <menu>
+            <item
+                android:id="@+id/item_setting"
+                android:icon="@drawable/icon_setting"
+                android:title="系统设置" />
+
+            <item
+                android:id="@+id/item_feedback"
+                android:icon="@drawable/icon_feedback"
+                android:title="问题反馈" />
+
+            <item
+                android:id="@+id/item_about"
+                android:icon="@drawable/icon_about"
+                android:title="关于BkApp" />
+        </menu>
+    </item>
+</menu>
