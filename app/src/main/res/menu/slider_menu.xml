@@ -16,6 +16,11 @@
     <item android:title="选项">
         <menu>
             <item
+                android:id="@+id/item_collection"
+                android:icon="@drawable/icon_collection_n"
+                android:title="我的收藏" />
+
+            <item
                 android:id="@+id/item_setting"
                 android:icon="@drawable/icon_setting"
                 android:title="系统设置" />

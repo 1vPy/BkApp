@@ -12,7 +12,9 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "bkApp.db";
     private static final int DATABASE_VERSION = 1;
     private static final String SQL_CREATE_TB_COLLECTION = "create table if not exists tb_collection(" +
-            "id INTEGER primary key not null," +
+            "id INTEGER primary key autoincrement not null," +
+            "imageUrl TEXT not null,"+
+            "movieName TEXT not null,"+
             "movieId TEXT not null);";
     private static DbHelper instance;
 

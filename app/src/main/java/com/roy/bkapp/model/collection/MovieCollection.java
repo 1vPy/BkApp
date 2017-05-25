@@ -6,10 +6,20 @@ package com.roy.bkapp.model.collection;
 
 public class MovieCollection {
     private Integer id;
+    private String imageUrl;
     private String movieName;
-    private String movieType;
-    private String movieStar;
     private String movieId;
+
+    public MovieCollection() {
+
+    }
+
+    public MovieCollection(String imageUrl, String movieName, String movieId) {
+        this.imageUrl = imageUrl;
+        this.movieName = movieName;
+        this.movieId = movieId;
+    }
+
 
     public Integer getId() {
         return id;
@@ -19,28 +29,20 @@ public class MovieCollection {
         this.id = id;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public String getMovieName() {
         return movieName;
     }
 
     public void setMovieName(String movieName) {
         this.movieName = movieName;
-    }
-
-    public String getMovieType() {
-        return movieType;
-    }
-
-    public void setMovieType(String movieType) {
-        this.movieType = movieType;
-    }
-
-    public String getMovieStar() {
-        return movieStar;
-    }
-
-    public void setMovieStar(String movieStar) {
-        this.movieStar = movieStar;
     }
 
     public String getMovieId() {

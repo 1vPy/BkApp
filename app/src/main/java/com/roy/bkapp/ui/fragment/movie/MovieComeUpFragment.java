@@ -191,13 +191,10 @@ public class MovieComeUpFragment extends BaseFragment<MovieComeUpView,MovieComeU
         if (mSubjectsList == null || mSubjectsList.size() <= 0) {
             View error = LayoutInflater.from(getActivity()).inflate(R.layout.view_error, (ViewGroup) ryv_movie.getParent(), false);
             mMovieComeUpAdapter.setEmptyView(error);
-            error.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mMovieComeUpAdapter.setEmptyView(R.layout.view_loading, (ViewGroup) ryv_movie.getParent());
-                    pageCount = 0;
-                    mPresenter.getMovieComeUp(pageCount * PAGE_SIZE, PAGE_SIZE);
-                }
+            error.setOnClickListener(v -> {
+                mMovieComeUpAdapter.setEmptyView(R.layout.view_loading, (ViewGroup) ryv_movie.getParent());
+                pageCount = 0;
+                mPresenter.getMovieComeUp(pageCount * PAGE_SIZE, PAGE_SIZE);
             });
         }
     }

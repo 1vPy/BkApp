@@ -112,6 +112,9 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
         SnackBarUtils.LongSnackbar(view_login_register, "注册成功", SnackBarUtils.Info).show();
         login_username.setText(register_username.getText().toString());
         login_password.setText(register_password.getText().toString());
+        register_username.setText("");
+        register_phone.setText("");
+        register_password.setText("");
         switchMode();
     }
 

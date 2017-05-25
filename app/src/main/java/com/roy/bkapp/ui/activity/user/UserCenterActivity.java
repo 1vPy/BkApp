@@ -45,12 +45,7 @@ public class UserCenterActivity extends BaseSwipeBackActivity<UserCenterView, Us
     @Override
     protected void initViewAndEvent() {
         mToolbar.setTitle("用户中心");
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UserCenterActivity.this.finish();
-            }
-        });
+        mToolbar.setNavigationOnClickListener(v -> UserCenterActivity.this.finish());
         btn_logout.setOnClickListener(this);
     }
 

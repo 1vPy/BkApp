@@ -39,6 +39,14 @@
         <activity
             android:name=".ui.activity.user.UserCenterActivity"
             android:screenOrientation="sensorPortrait" />
+
+        <activity
+            android:name=".ui.activity.movie.MovieCollectionActivity"
+            android:screenOrientation="sensorPortrait" />
+
+        <activity
+            android:name=".ui.activity.common.WebViewActivity"
+            android:screenOrientation="sensorPortrait" />
     </application>
 
 </manifest>

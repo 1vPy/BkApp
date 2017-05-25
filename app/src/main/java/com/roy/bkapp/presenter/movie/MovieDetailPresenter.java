@@ -2,7 +2,9 @@ package com.roy.bkapp.presenter.movie;
 
 import com.roy.bkapp.db.DbHelperService;
 import com.roy.bkapp.http.RequestCallback;
+import com.roy.bkapp.http.api.bmob.BmobApiService;
 import com.roy.bkapp.http.api.douban.DoubanApiService;
+import com.roy.bkapp.model.collection.MovieCollection;
 import com.roy.bkapp.model.movie.details.JsonDetailBean;
 import com.roy.bkapp.presenter.BasePresenter;
 import com.roy.bkapp.ui.view.movie.MovieDetailView;
@@ -19,11 +21,14 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView>{
 
     private DbHelperService mDbHelperService;
 
+    private BmobApiService mBmobApiService;
+
 
     @Inject
-    public MovieDetailPresenter(DoubanApiService doubanApiService,DbHelperService dbHelperService){
+    public MovieDetailPresenter(DoubanApiService doubanApiService,DbHelperService dbHelperService,BmobApiService bmobApiService){
         mDoubanApiService = doubanApiService;
         mDbHelperService = dbHelperService;
+        mBmobApiService = bmobApiService;
     }
 
     public void getMovieDetail(String id){
@@ -44,8 +49,8 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView>{
         });
     }
 
-    public void insertCollection(String id){
-        mDbHelperService.insertCollection(id, new RequestCallback<String>() {
+    public void insertCollection(MovieCollection movieCollection){
+        mDbHelperService.insertCollection(movieCollection, new RequestCallback<String>() {
             @Override
             public void onSuccess(String s) {
                 if(isAttached()){
@@ -56,7 +61,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView>{
             @Override
             public void onFailure(String message) {
                 if(isAttached()){
-                    getView().collectionFailed(message);
+                    getView().showError(message);
                 }
             }
         });
@@ -74,7 +79,7 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView>{
             @Override
             public void onFailure(String message) {
                 if(isAttached()){
-                    getView().deleteFailed(message);
+                    getView().showError(message);
                 }
             }
         });
@@ -94,6 +99,60 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView>{
             public void onFailure(String message) {
                 if(isAttached()){
                     getView().isCollected(false);
+                }
+            }
+        });
+    }
+
+    public void praiseNum(String movieId){
+        mBmobApiService.praiseNum(movieId, new RequestCallback<Integer>() {
+            @Override
+            public void onSuccess(Integer integer) {
+                if(isAttached()){
+                    getView().praiseNum(integer);
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                if(isAttached()){
+                    getView().showError(message);
+                }
+            }
+        });
+    }
+
+    public void isPraise(String movieId,String username){
+        mBmobApiService.isPraise(movieId, username, new RequestCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean aBoolean) {
+                if(isAttached()){
+                    getView().isPraise(aBoolean);
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                if(isAttached()){
+                    getView().showError(message);
+                }
+            }
+        });
+    }
+
+    public void addPraise(String movieId,String username){
+        mBmobApiService.addPraise(movieId, username, new RequestCallback<String>() {
+            @Override
+            public void onSuccess(String s) {
+                if(isAttached()){
+                    getView().praiseSuccess(s);
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                if(isAttached()){
+                    getView().showError(message);
                 }
             }
         });

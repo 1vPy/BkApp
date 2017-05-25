@@ -3,6 +3,7 @@ package com.roy.bkapp.ui.activity.movie;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -21,17 +22,20 @@ import android.widget.TextView;
 
 import com.roy.bkapp.BkKit;
 import com.roy.bkapp.R;
+import com.roy.bkapp.model.collection.MovieCollection;
 import com.roy.bkapp.model.movie.Casts;
 import com.roy.bkapp.model.movie.DirectorActor;
 import com.roy.bkapp.model.movie.Directors;
 import com.roy.bkapp.model.movie.details.JsonDetailBean;
 import com.roy.bkapp.presenter.movie.MovieDetailPresenter;
 import com.roy.bkapp.ui.activity.BaseSwipeBackActivity;
+import com.roy.bkapp.ui.activity.common.WebViewActivity;
 import com.roy.bkapp.ui.adapter.movie.MovieDetailAdapter;
 import com.roy.bkapp.ui.view.movie.MovieDetailView;
 import com.roy.bkapp.utils.ImageUtils;
 import com.roy.bkapp.utils.LogUtils;
 import com.roy.bkapp.utils.SnackBarUtils;
+import com.roy.bkapp.utils.UserPreference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +87,13 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     NestedScrollView nsv_scroller;
     @BindView(R.id.detail_bottom)
     FrameLayout detail_bottom;
+    @BindView(R.id.tv_detail_bottom_share)
+    TextView tv_detail_bottom_share;
+    @BindView(R.id.tv_detail_bottom_comment)
+    TextView tv_detail_bottom_comment;
+    @BindView(R.id.tv_detail_bottom_praise)
+    TextView tv_detail_bottom_praise;
+
 
     private RelativeLayout viewError;
     private LinearLayout viewLoading;
@@ -90,12 +101,13 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     private MovieDetailAdapter mMovieDetailAdapter;
 
     private String mId;
-    private String alt;
-    private String schedule_url;
+    private JsonDetailBean mJsonDetailBean;
     private List<DirectorActor> mDirectorActors = new ArrayList<>();
     private List<DirectorActor> mDirectorActorList = new ArrayList<>();
     private boolean isCollected = false;
 
+    private boolean isPraise = false;
+    private int praiseNum = 0;
     private boolean isBottomShow = true;
 
     public static void start(Context context, String id) {
@@ -117,12 +129,7 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
 
     @Override
     protected void initViewAndEvent() {
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MovieDetailActivity.this.finish();
-            }
-        });
+        mToolbar.setNavigationOnClickListener(v -> MovieDetailActivity.this.finish());
         ryv_movie.setLayoutManager(new LinearLayoutManager(this) {
             @Override
             public boolean canScrollVertically() {
@@ -138,9 +145,12 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         if (mId != null) {
             mPresenter.getMovieDetail(mId);
             mPresenter.isCollected(mId);
-
+            mPresenter.praiseNum(mId);
+            if(UserPreference.getUserPreference(this).readUserInfo() != null){
+                mPresenter.isPraise(mId, UserPreference.getUserPreference(this).readUserInfo().getUsername());
+            }
         }
-        fab_collection.setOnClickListener(this);
+
 
         ViewGroup parent = (ViewGroup) nsv_scroller.getParent();
         View.inflate(this, R.layout.view_error, parent);
@@ -148,13 +158,32 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         viewError = (RelativeLayout) parent.findViewById(R.id.view_error);
         viewLoading = (LinearLayout) parent.findViewById(R.id.view_loading);
 
+        tv_detail_bottom_praise.setEnabled(false);
+
         viewError.setOnClickListener(this);
+        fab_collection.setOnClickListener(this);
+        tv_detail_bottom_share.setOnClickListener(this);
+        tv_detail_bottom_comment.setOnClickListener(this);
+        tv_detail_bottom_praise.setOnClickListener(this);
+        tv_more_details.setOnClickListener(this);
+        tv_buy_tickets.setOnClickListener(this);
 
         onLoading();
 
     }
 
+    @Override
+    public void finish() {
+        if(!isCollected){
+            Intent intent = new Intent();
+            intent.putExtra("position", getIntent().getIntExtra("position", -1));
+            setResult(RESULT_OK, intent);
+        }
+        super.finish();
+    }
+
     private void initData(JsonDetailBean jsonDetailBean) {
+        mJsonDetailBean = jsonDetailBean;
         if (!TextUtils.isEmpty(jsonDetailBean.getTitle())) {
             mToolbar.setTitle(jsonDetailBean.getTitle());
             tv_name.setText(jsonDetailBean.getTitle());
@@ -187,9 +216,6 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         tv_summary.setText(jsonDetailBean.getSummary());
 
         initDirectorActorList(jsonDetailBean);
-
-        alt = jsonDetailBean.getAlt();
-        schedule_url = jsonDetailBean.getSchedule_url();
 
         onComplete();
     }
@@ -232,21 +258,12 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     }
 
     @Override
-    public void collectionFailed(String s) {
-
-    }
-
-    @Override
     public void deleteSuccess(String s) {
         fab_collection.setSelected(false);
         isCollected = false;
         SnackBarUtils.LongSnackbar(cdl_root, "收藏已删除", SnackBarUtils.Info).show();
     }
 
-    @Override
-    public void deleteFailed(String s) {
-
-    }
 
     @Override
     public void isCollected(boolean b) {
@@ -261,39 +278,87 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     }
 
     @Override
+    public void isPraise(boolean b) {
+        isPraise = b;
+        if(b){
+            Drawable drawable = getResources().getDrawable(R.drawable.icon_collect_n);
+            drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+            tv_detail_bottom_praise.setCompoundDrawables(null,drawable,null,null);
+        }
+        tv_detail_bottom_praise.setEnabled(true);
+    }
+
+    @Override
+    public void praiseNum(int num) {
+        praiseNum = num;
+        tv_detail_bottom_praise.setText("点赞("+num+")");
+    }
+
+    @Override
+    public void praiseSuccess(String s) {
+        isPraise = true;
+        Drawable drawable = getResources().getDrawable(R.drawable.icon_collect_n);
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+        tv_detail_bottom_praise.setCompoundDrawables(null,drawable,null,null);
+        tv_detail_bottom_praise.setText("点赞("+(praiseNum+1)+")");
+        SnackBarUtils.LongSnackbar(cdl_root, "点赞成功", SnackBarUtils.Info).show();
+
+    }
+
+    @Override
     public void showError(String message) {
         onError();
-        SnackBarUtils.LongSnackbar(cdl_root, "加载出错：" + message, SnackBarUtils.Warning).show();
+        SnackBarUtils.LongSnackbar(cdl_root, message, SnackBarUtils.Warning).show();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_more_details:
-                openWebView(alt);
+                openWebView(mJsonDetailBean.getAlt());
                 break;
             case R.id.tv_buy_tickets:
-                openWebView(schedule_url);
+                openWebView(mJsonDetailBean.getSchedule_url());
                 break;
             case R.id.fab_collection:
-                if (isCollected)
-                    mPresenter.deleteCollection(mId);
-                else {
-                    mPresenter.insertCollection(mId);
-                }
+                collection();
                 break;
             case R.id.view_error:
                 mPresenter.getMovieDetail(mId);
                 onLoading();
                 break;
+            case R.id.tv_detail_bottom_praise:
+                praise();
+                break;
+        }
+    }
+
+    private void collection(){
+        if (isCollected)
+            mPresenter.deleteCollection(mId);
+        else {
+            MovieCollection collection = new MovieCollection(mJsonDetailBean.getImages().getLarge(), mJsonDetailBean.getTitle(), mJsonDetailBean.getId());
+            mPresenter.insertCollection(collection);
+        }
+    }
+
+    private void praise(){
+        if(isPraise){
+            SnackBarUtils.LongSnackbar(cdl_root, "您已经点过赞了，请不要重复点赞", SnackBarUtils.Info).show();
+        }else{
+            if(UserPreference.getUserPreference(this).readUserInfo()!= null){
+                mPresenter.addPraise(mId,UserPreference.getUserPreference(this).readUserInfo().getUsername());
+            }else{
+                SnackBarUtils.LongSnackbar(cdl_root, "请先登录，再进行点赞", SnackBarUtils.Warning).show();
+            }
         }
     }
 
     private void openWebView(String url) {
-/*        Intent intent = new Intent();
-        intent.putExtra(AppConfig.URL, url);
-        intent.setClass(MovieDetailsActivity.this, WebViewActivity.class);
-        startActivity(intent);*/
+        Intent intent = new Intent();
+        intent.putExtra("url", url);
+        intent.setClass(MovieDetailActivity.this, WebViewActivity.class);
+        startActivity(intent);
     }
 
     private void onLoading() {
@@ -319,10 +384,10 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
 
     @Override
     public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-        if(scrollY - oldScrollY > 0 && isBottomShow) {  //下移隐藏
+        if (scrollY - oldScrollY > 0 && isBottomShow) {  //下移隐藏
             isBottomShow = false;
             detail_bottom.animate().translationY(detail_bottom.getHeight());
-        } else if(scrollY - oldScrollY < 0 && !isBottomShow){    //上移出现
+        } else if (scrollY - oldScrollY < 0 && !isBottomShow) {    //上移出现
             isBottomShow = true;
             detail_bottom.animate().translationY(0);
         }

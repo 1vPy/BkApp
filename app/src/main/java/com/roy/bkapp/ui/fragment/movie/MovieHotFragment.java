@@ -161,13 +161,10 @@ public class MovieHotFragment extends BaseFragment<MovieHotView, MovieHotPresent
         if (mSubjectsList == null || mSubjectsList.size() <= 0) {
             View error = LayoutInflater.from(getActivity()).inflate(R.layout.view_error, (ViewGroup) ryv_movie.getParent(), false);
             mMovieHotAdapter.setEmptyView(error);
-            error.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mMovieHotAdapter.setEmptyView(R.layout.view_loading, (ViewGroup) ryv_movie.getParent());
-                    pageCount = 0;
-                    mPresenter.getMovieHot(pageCount * PAGE_SIZE, PAGE_SIZE, "武汉");
-                }
+            error.setOnClickListener(v -> {
+                mMovieHotAdapter.setEmptyView(R.layout.view_loading, (ViewGroup) ryv_movie.getParent());
+                pageCount = 0;
+                mPresenter.getMovieHot(pageCount * PAGE_SIZE, PAGE_SIZE, "武汉");
             });
         }
     }

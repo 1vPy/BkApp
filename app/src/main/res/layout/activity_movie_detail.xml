@@ -276,52 +276,40 @@
             android:orientation="horizontal"
             android:padding="6dp">
 
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="2" />
-
             <TextView
-                android:id="@+id/tv_detail_bottom_like"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_detail_bottom_share"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:drawablePadding="3dp"
                 android:drawableTop="@drawable/icon_share"
+                android:gravity="center_horizontal"
                 android:text="分享"
                 android:textColor="@android:color/white" />
 
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="3" />
 
             <TextView
                 android:id="@+id/tv_detail_bottom_comment"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:drawablePadding="3dp"
                 android:drawableTop="@drawable/icon_feedback"
+                android:gravity="center_horizontal"
                 android:text="评论"
                 android:textColor="@android:color/white" />
 
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="3" />
 
             <TextView
-                android:id="@+id/tv_detail_bottom_share"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_detail_bottom_praise"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:drawablePadding="3dp"
                 android:drawableTop="@drawable/icon_collect"
-                android:text="点赞"
+                android:gravity="center_horizontal"
+                android:text="点赞(0)"
                 android:textColor="@android:color/white" />
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="2" />
         </LinearLayout>
 
     </FrameLayout>

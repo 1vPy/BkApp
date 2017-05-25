@@ -12,11 +12,13 @@ public interface MovieDetailView extends BaseView{
 
     void collectionSuccess(String s);
 
-    void collectionFailed(String s);
-
     void deleteSuccess(String s);
 
-    void deleteFailed(String s);
-
     void isCollected(boolean b);
+
+    void isPraise(boolean b);
+
+    void praiseNum(int num);
+
+    void praiseSuccess(String s);
 }

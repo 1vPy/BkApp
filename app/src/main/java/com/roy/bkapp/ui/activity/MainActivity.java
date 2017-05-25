@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.roy.bkapp.R;
+import com.roy.bkapp.ui.activity.movie.MovieCollectionActivity;
 import com.roy.bkapp.ui.activity.user.LoginRegisterActivity;
 import com.roy.bkapp.ui.fragment.movie.MovieFragment;
 import com.roy.bkapp.ui.fragment.music.MusicFragment;
@@ -96,12 +97,7 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
 
         viewSplash.setVisibility(View.VISIBLE);
         dl_main.setVisibility(View.INVISIBLE);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mHandler.sendEmptyMessage(0);
-            }
-        }, 2000);
+        new Handler().postDelayed(() -> mHandler.sendEmptyMessage(0), 2000);
     }
 
     private Handler mHandler = new Handler() {
@@ -121,13 +117,10 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
         animator.setDuration(1000);
         animator.start();
         dl_main.setVisibility(View.VISIBLE);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float a = (Float) animation.getAnimatedValue();
-                viewSplash.setAlpha(a);
-                dl_main.setAlpha(1f - a);
-            }
+        animator.addUpdateListener(animation -> {
+            float a = (Float) animation.getAnimatedValue();
+            viewSplash.setAlpha(a);
+            dl_main.setAlpha(1f - a);
         });
     }
 
@@ -153,6 +146,9 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
             case R.id.item_music:
                 switchFragment(mNowFragment, mMusicFragment);
                 mToolbar.setTitle("音乐");
+                break;
+            case R.id.item_collection:
+                MovieCollectionActivity.start(this);
                 break;
             case R.id.item_setting:
                 break;

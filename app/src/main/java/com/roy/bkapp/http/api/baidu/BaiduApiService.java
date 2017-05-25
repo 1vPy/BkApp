@@ -39,84 +39,52 @@ public class BaiduApiService {
         mBaiduApi.getMusicBillCategory()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<JsonMusicBillBean>() {
-                    @Override
-                    public void accept(@NonNull JsonMusicBillBean jsonMusicBillBean) throws Exception {
-                        if (jsonMusicBillBean != null) {
-                            rc.onSuccess(jsonMusicBillBean);
-                        } else {
-                            rc.onFailure("没有数据");
-                        }
+                .subscribe(jsonMusicBillBean -> {
+                    if (jsonMusicBillBean != null) {
+                        rc.onSuccess(jsonMusicBillBean);
+                    } else {
+                        rc.onFailure("没有数据");
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        rc.onFailure(throwable.getLocalizedMessage());
-                    }
-                });
+                }, throwable -> rc.onFailure(throwable.getLocalizedMessage()));
     }
 
     public void getMusicBillList(int type, int offset, int size, final RequestCallback<JsonSongListBean> rc) {
         mBaiduApi.getMusicBillList(type, offset, size)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<JsonSongListBean>() {
-                    @Override
-                    public void accept(@NonNull JsonSongListBean jsonSongListBean) throws Exception {
-                        if (jsonSongListBean != null) {
-                            rc.onSuccess(jsonSongListBean);
-                        } else {
-                            rc.onFailure("没有数据");
-                        }
+                .subscribe(jsonSongListBean -> {
+                    if (jsonSongListBean != null) {
+                        rc.onSuccess(jsonSongListBean);
+                    } else {
+                        rc.onFailure("没有数据");
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        rc.onFailure(throwable.getLocalizedMessage());
-                    }
-                });
+                }, throwable -> rc.onFailure(throwable.getLocalizedMessage()));
     }
 
     public void getMusicSearch(String query, int pageNo, int pageSize, final RequestCallback<JsonSearchBean> rc) {
         mBaiduApi.getMusicSearch(query, pageNo, pageSize)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<JsonSearchBean>() {
-                    @Override
-                    public void accept(@NonNull JsonSearchBean jsonSearchBean) throws Exception {
-                        if (jsonSearchBean != null) {
-                            rc.onSuccess(jsonSearchBean);
-                        } else {
-                            rc.onFailure("没有数据");
-                        }
+                .subscribe(jsonSearchBean -> {
+                    if (jsonSearchBean != null) {
+                        rc.onSuccess(jsonSearchBean);
+                    } else {
+                        rc.onFailure("没有数据");
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        rc.onFailure(throwable.getLocalizedMessage());
-                    }
-                });
+                }, throwable -> rc.onFailure(throwable.getLocalizedMessage()));
     }
 
     public void getMusicInfo(String songid, final RequestCallback<JsonMusicInfoBean> rc) {
         mBaiduApi.getMusicInfo(songInfo(songid))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<JsonMusicInfoBean>() {
-                    @Override
-                    public void accept(@NonNull JsonMusicInfoBean jsonMusicInfoBean) throws Exception {
-                        if (jsonMusicInfoBean != null) {
-                            rc.onSuccess(jsonMusicInfoBean);
-                        } else {
-                            rc.onFailure("没有数据");
-                        }
+                .subscribe(jsonMusicInfoBean -> {
+                    if (jsonMusicInfoBean != null) {
+                        rc.onSuccess(jsonMusicInfoBean);
+                    } else {
+                        rc.onFailure("没有数据");
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        rc.onFailure(throwable.getLocalizedMessage());
-                    }
-                });
+                }, throwable -> rc.onFailure(throwable.getLocalizedMessage()));
     }
 
     public static String songInfo(String songid) {
