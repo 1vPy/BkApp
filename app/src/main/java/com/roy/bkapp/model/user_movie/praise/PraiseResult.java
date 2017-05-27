@@ -1,10 +1,10 @@
 
-package com.roy.bkapp.model.user_movie;
+package com.roy.bkapp.model.user_movie.praise;
 
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
-public class Result {
+public class PraiseResult {
 
     @SerializedName("createdAt")
     private String mCreatedAt;

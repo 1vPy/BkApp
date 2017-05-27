@@ -157,4 +157,22 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView>{
             }
         });
     }
+
+    public void commentNum(String movieId){
+        mBmobApiService.commentNum(movieId, new RequestCallback<Integer>() {
+            @Override
+            public void onSuccess(Integer integer) {
+                if(isAttached()){
+                    getView().commentNum(integer);
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                if(isAttached()){
+                    getView().showError(message);
+                }
+            }
+        });
+    }
 }

@@ -1,5 +1,5 @@
 
-package com.roy.bkapp.model.user_movie;
+package com.roy.bkapp.model.user_movie.praise;
 
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
@@ -8,13 +8,13 @@ import com.google.gson.annotations.SerializedName;
 public class PraiseMovie {
 
     @SerializedName("results")
-    private List<Result> mResults;
+    private List<PraiseResult> mResults;
 
-    public List<Result> getResults() {
+    public List<PraiseResult> getResults() {
         return mResults;
     }
 
-    public void setResults(List<Result> results) {
+    public void setResults(List<PraiseResult> results) {
         mResults = results;
     }
 

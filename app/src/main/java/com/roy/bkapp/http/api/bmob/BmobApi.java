@@ -34,4 +34,12 @@ public interface BmobApi {
     @Headers({"X-Bmob-Application-Id:" + Constants.application_id, "X-Bmob-REST-API-Key:" + Constants.application_key, "Content-Type:application/json"})
     @POST("classes/Movie_Praise")
     Observable<Response<ResponseBody>> addPraise(@Body RequestBody body);
+
+    @Headers({"X-Bmob-Application-Id:" + Constants.application_id, "X-Bmob-REST-API-Key:" + Constants.application_key, "Content-Type:application/json"})
+    @GET("classes/Movie_Comment")
+    Observable<Response<ResponseBody>> commentQuery(@Query("where") String json);
+
+    @Headers({"X-Bmob-Application-Id:" + Constants.application_id, "X-Bmob-REST-API-Key:" + Constants.application_key, "Content-Type:application/json"})
+    @POST("classes/Movie_Comment")
+    Observable<Response<ResponseBody>> addComment(@Body RequestBody body);
 }

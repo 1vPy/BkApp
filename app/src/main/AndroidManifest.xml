@@ -47,6 +47,14 @@
         <activity
             android:name=".ui.activity.common.WebViewActivity"
             android:screenOrientation="sensorPortrait" />
+
+        <activity
+            android:name=".ui.activity.movie.MovieCommentActivity"
+            android:screenOrientation="sensorPortrait" />
+
+        <activity
+            android:name=".ui.activity.movie.MovieRatingActivity"
+            android:screenOrientation="sensorPortrait" />
     </application>
 
 </manifest>

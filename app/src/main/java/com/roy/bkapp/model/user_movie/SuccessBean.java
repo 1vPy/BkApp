@@ -4,7 +4,7 @@ package com.roy.bkapp.model.user_movie;
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
-public class PraiseSuccessBean {
+public class SuccessBean {
 
     @SerializedName("createdAt")
     private String mCreatedAt;

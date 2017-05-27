@@ -8,13 +8,13 @@ import com.roy.bkapp.dagger.module.ApplicationModule;
 import com.roy.bkapp.dagger.module.DataModule;
 import com.roy.bkapp.dagger.module.HttpModule;
 
-import dagger.Component;
-
 /**
  * Created by 1vPy(Roy) on 2017/5/10.
  */
 
 public class BkApplication extends Application {
+    private static final String TAG = BkApplication.class.getSimpleName();
+
     private static AppComponent appComponent;
     private static Application instance;
 
@@ -26,20 +26,26 @@ public class BkApplication extends Application {
 
     }
 
-    private void init(){
+    private void init() {
         initBkKit();
         initDagger();
+        initShareSDK();
+
     }
 
-    private void initBkKit(){
+    private void initShareSDK() {
+
+    }
+
+    private void initBkKit() {
         BkKit.setContext(getApplicationContext());
     }
 
-    private void initDagger(){
+    private void initDagger() {
 
     }
 
-    public static AppComponent getAppComponent(){
+    public static AppComponent getAppComponent() {
         if (appComponent == null) {
             appComponent = DaggerAppComponent.builder()
                     .applicationModule(new ApplicationModule(instance))

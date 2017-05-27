@@ -296,7 +296,7 @@
                 android:drawablePadding="3dp"
                 android:drawableTop="@drawable/icon_feedback"
                 android:gravity="center_horizontal"
-                android:text="评论"
+                android:text="评论(0)"
                 android:textColor="@android:color/white" />
 
 

@@ -3,20 +3,18 @@ package com.roy.bkapp.http.api.bmob;
 import com.roy.bkapp.http.RequestCallback;
 import com.roy.bkapp.model.user.ErrorBean;
 import com.roy.bkapp.model.user.UserBean;
-import com.roy.bkapp.model.user_movie.PraiseMovie;
-import com.roy.bkapp.model.user_movie.PraiseSuccessBean;
-import com.roy.bkapp.model.user_movie.Result;
+import com.roy.bkapp.model.user_movie.comment.CommentMovie;
+import com.roy.bkapp.model.user_movie.comment.CommentResult;
+import com.roy.bkapp.model.user_movie.praise.PraiseMovie;
+import com.roy.bkapp.model.user_movie.SuccessBean;
+import com.roy.bkapp.model.user_movie.praise.PraiseResult;
 import com.roy.bkapp.utils.JsonUtils;
 import com.roy.bkapp.utils.LogUtils;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Response;
 
 /**
  * Created by Administrator on 2017/5/17.
@@ -75,7 +73,7 @@ public class BmobApiService {
     }
 
     public void praiseNum(String movieId, RequestCallback<Integer> requestCallback) {
-        Result result = new Result();
+        PraiseResult result = new PraiseResult();
         result.setMovieId(movieId);
         String json = JsonUtils.JavaBean2Json(result);
         LogUtils.log(TAG, "json:" + json, LogUtils.DEBUG);
@@ -100,7 +98,7 @@ public class BmobApiService {
     }
 
     public void isPraise(String movieId, String username, RequestCallback<Boolean> requestCallback) {
-        Result result = new Result();
+        PraiseResult result = new PraiseResult();
         result.setMovieId(movieId);
         result.setUsername(username);
         String json = JsonUtils.JavaBean2Json(result);
@@ -130,7 +128,7 @@ public class BmobApiService {
     }
 
     public void addPraise(String movieId, String username, RequestCallback<String> requestCallback) {
-        Result result = new Result();
+        PraiseResult result = new PraiseResult();
         result.setMovieId(movieId);
         result.setUsername(username);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), JsonUtils.JavaBean2Json(result));
@@ -139,7 +137,82 @@ public class BmobApiService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(responseBodyResponse -> {
                     if (responseBodyResponse.isSuccessful()) {
-                        requestCallback.onSuccess(JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), PraiseSuccessBean.class).getObjectId());
+                        requestCallback.onSuccess(JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), SuccessBean.class).getObjectId());
+                    } else {
+                        switch (responseBodyResponse.code()) {
+                            case 404:
+                                requestCallback.onFailure(JsonUtils.Json2JavaBean(responseBodyResponse.errorBody().string(), ErrorBean.class).getError());
+                                break;
+                            default:
+                                requestCallback.onFailure("未知错误");
+                                break;
+                        }
+                    }
+                }, throwable -> requestCallback.onFailure(throwable.getLocalizedMessage()));
+    }
+
+
+    public void commentNum(String movieId,RequestCallback<Integer> requestCallback){
+        CommentResult result = new CommentResult();
+        result.setMovieId(movieId);
+        String json = JsonUtils.JavaBean2Json(result);
+        mBmobApi.commentQuery(json)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(responseBodyResponse -> {
+                    if (responseBodyResponse.isSuccessful()) {
+                        requestCallback.onSuccess(JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), CommentMovie.class).getResults().size());
+                    } else {
+                        switch (responseBodyResponse.code()) {
+                            case 404:
+                                requestCallback.onFailure(JsonUtils.Json2JavaBean(responseBodyResponse.errorBody().string(), ErrorBean.class).getError());
+                                break;
+                            default:
+                                requestCallback.onFailure("未知错误");
+                                break;
+                        }
+                    }
+                }, throwable -> requestCallback.onFailure(throwable.getLocalizedMessage()));
+    }
+
+
+    public void commentQuery(String movieId,RequestCallback<CommentMovie> requestCallback){
+        CommentResult result = new CommentResult();
+        result.setMovieId(movieId);
+        String json = JsonUtils.JavaBean2Json(result);
+        mBmobApi.commentQuery(json)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(responseBodyResponse -> {
+                    if (responseBodyResponse.isSuccessful()) {
+                        requestCallback.onSuccess(JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), CommentMovie.class));
+                    } else {
+                        switch (responseBodyResponse.code()) {
+                            case 404:
+                                requestCallback.onFailure(JsonUtils.Json2JavaBean(responseBodyResponse.errorBody().string(), ErrorBean.class).getError());
+                                break;
+                            default:
+                                requestCallback.onFailure("未知错误");
+                                break;
+                        }
+                    }
+                }, throwable -> requestCallback.onFailure(throwable.getLocalizedMessage()));
+    }
+
+
+    public void addComment(String comment,String username,String movieId,int rating, RequestCallback<String> requestCallback){
+        CommentResult result = new CommentResult();
+        result.setMovieId(movieId);
+        result.setUsername(username);
+        result.setComment(comment);
+        result.setRating(rating);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), JsonUtils.JavaBean2Json(result));
+        mBmobApi.addComment(requestBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(responseBodyResponse -> {
+                    if (responseBodyResponse.isSuccessful()) {
+                        requestCallback.onSuccess(JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), SuccessBean.class).getObjectId());
                     } else {
                         switch (responseBodyResponse.code()) {
                             case 404:

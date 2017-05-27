@@ -21,4 +21,6 @@ public interface MovieDetailView extends BaseView{
     void praiseNum(int num);
 
     void praiseSuccess(String s);
+
+    void commentNum(int num);
 }

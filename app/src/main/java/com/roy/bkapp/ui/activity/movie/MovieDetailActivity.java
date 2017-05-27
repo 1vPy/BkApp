@@ -38,6 +38,7 @@ import com.roy.bkapp.utils.SnackBarUtils;
 import com.roy.bkapp.utils.UserPreference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -123,6 +124,14 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(mId != null){
+            mPresenter.commentNum(mId);
+        }
+    }
+
+    @Override
     protected void initInject() {
         getActivityComponent().inject(this);
     }
@@ -146,7 +155,7 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
             mPresenter.getMovieDetail(mId);
             mPresenter.isCollected(mId);
             mPresenter.praiseNum(mId);
-            if(UserPreference.getUserPreference(this).readUserInfo() != null){
+            if (UserPreference.getUserPreference(this).readUserInfo() != null) {
                 mPresenter.isPraise(mId, UserPreference.getUserPreference(this).readUserInfo().getUsername());
             }
         }
@@ -174,7 +183,7 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
 
     @Override
     public void finish() {
-        if(!isCollected){
+        if (!isCollected) {
             Intent intent = new Intent();
             intent.putExtra("position", getIntent().getIntExtra("position", -1));
             setResult(RESULT_OK, intent);
@@ -280,10 +289,10 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     @Override
     public void isPraise(boolean b) {
         isPraise = b;
-        if(b){
+        if (b) {
             Drawable drawable = getResources().getDrawable(R.drawable.icon_collect_n);
             drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-            tv_detail_bottom_praise.setCompoundDrawables(null,drawable,null,null);
+            tv_detail_bottom_praise.setCompoundDrawables(null, drawable, null, null);
         }
         tv_detail_bottom_praise.setEnabled(true);
     }
@@ -291,7 +300,7 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     @Override
     public void praiseNum(int num) {
         praiseNum = num;
-        tv_detail_bottom_praise.setText("点赞("+num+")");
+        tv_detail_bottom_praise.setText("点赞(" + num + ")");
     }
 
     @Override
@@ -299,10 +308,15 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         isPraise = true;
         Drawable drawable = getResources().getDrawable(R.drawable.icon_collect_n);
         drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-        tv_detail_bottom_praise.setCompoundDrawables(null,drawable,null,null);
-        tv_detail_bottom_praise.setText("点赞("+(praiseNum+1)+")");
+        tv_detail_bottom_praise.setCompoundDrawables(null, drawable, null, null);
+        tv_detail_bottom_praise.setText("点赞(" + (praiseNum + 1) + ")");
         SnackBarUtils.LongSnackbar(cdl_root, "点赞成功", SnackBarUtils.Info).show();
 
+    }
+
+    @Override
+    public void commentNum(int num) {
+        tv_detail_bottom_comment.setText("评论(" + num + ")");
     }
 
     @Override
@@ -330,10 +344,13 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
             case R.id.tv_detail_bottom_praise:
                 praise();
                 break;
+            case R.id.tv_detail_bottom_comment:
+                MovieCommentActivity.start(this, mId);
+                break;
         }
     }
 
-    private void collection(){
+    private void collection() {
         if (isCollected)
             mPresenter.deleteCollection(mId);
         else {
@@ -342,13 +359,13 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         }
     }
 
-    private void praise(){
-        if(isPraise){
+    private void praise() {
+        if (isPraise) {
             SnackBarUtils.LongSnackbar(cdl_root, "您已经点过赞了，请不要重复点赞", SnackBarUtils.Info).show();
-        }else{
-            if(UserPreference.getUserPreference(this).readUserInfo()!= null){
-                mPresenter.addPraise(mId,UserPreference.getUserPreference(this).readUserInfo().getUsername());
-            }else{
+        } else {
+            if (UserPreference.getUserPreference(this).readUserInfo() != null) {
+                mPresenter.addPraise(mId, UserPreference.getUserPreference(this).readUserInfo().getUsername());
+            } else {
                 SnackBarUtils.LongSnackbar(cdl_root, "请先登录，再进行点赞", SnackBarUtils.Warning).show();
             }
         }
@@ -392,4 +409,5 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
             detail_bottom.animate().translationY(0);
         }
     }
+
 }
