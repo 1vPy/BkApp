@@ -200,7 +200,7 @@ public class BmobApiService {
     }
 
 
-    public void addComment(String comment,String username,String movieId,int rating, RequestCallback<String> requestCallback){
+    public void addComment(String comment,String username,String movieId,float rating, RequestCallback<String> requestCallback){
         CommentResult result = new CommentResult();
         result.setMovieId(movieId);
         result.setUsername(username);

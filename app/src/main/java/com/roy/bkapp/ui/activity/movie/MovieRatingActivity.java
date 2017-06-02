@@ -92,7 +92,7 @@ public class MovieRatingActivity extends BaseSwipeBackActivity<MovieRatingView, 
         } else if (et_comment.getText().toString().trim().isEmpty()) {
             Toast.makeText(this, "评论不能为空", Toast.LENGTH_LONG).show();
         } else {
-            mPresenter.addComment(et_comment.getText().toString().trim(), UserPreference.getUserPreference(this).readUserInfo().getUsername(), mId, rb_movie.getProgress());
+            mPresenter.addComment(et_comment.getText().toString().trim(), UserPreference.getUserPreference(this).readUserInfo().getUsername(), mId, rb_movie.getRating());
         }
     }
 }

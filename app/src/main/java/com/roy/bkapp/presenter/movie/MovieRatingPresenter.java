@@ -20,7 +20,7 @@ public class MovieRatingPresenter extends BasePresenter<MovieRatingView>{
         mBmobApiService = bmobApiService;
     }
 
-    public void addComment(String comment,String username,String movieId,int rating){
+    public void addComment(String comment,String username,String movieId,float rating){
         mBmobApiService.addComment(comment, username, movieId, rating,new RequestCallback<String>() {
             @Override
             public void onSuccess(String s) {

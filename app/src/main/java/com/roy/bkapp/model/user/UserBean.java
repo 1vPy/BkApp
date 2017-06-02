@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class UserBean {
 
-    @SerializedName("asd")
-    private Asd mAsd;
+    @SerializedName("userHeader")
+    private UserHeader mUserHeader;
     @SerializedName("createdAt")
     private String mCreatedAt;
     @SerializedName("email")
@@ -29,12 +29,12 @@ public class UserBean {
     @SerializedName("password")
     private String mPassword;
 
-    public Asd getAsd() {
-        return mAsd;
+    public UserHeader getUserHeader() {
+        return mUserHeader;
     }
 
-    public void setAsd(Asd asd) {
-        mAsd = asd;
+    public void setUserHeader(UserHeader userHeader) {
+        mUserHeader = userHeader;
     }
 
     public String getCreatedAt() {

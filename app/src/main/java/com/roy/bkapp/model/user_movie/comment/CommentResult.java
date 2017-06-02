@@ -15,7 +15,7 @@ public class CommentResult {
     @SerializedName("objectId")
     private String mObjectId;
     @SerializedName("rating")
-    private Integer mRating;
+    private Float mRating;
     @SerializedName("updatedAt")
     private String mUpdatedAt;
     @SerializedName("username")
@@ -53,11 +53,11 @@ public class CommentResult {
         mObjectId = objectId;
     }
 
-    public Integer getRating() {
+    public Float getRating() {
         return mRating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(Float rating) {
         mRating = rating;
     }
 

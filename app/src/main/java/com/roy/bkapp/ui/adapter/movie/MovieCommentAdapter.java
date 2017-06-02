@@ -20,6 +20,6 @@ public class MovieCommentAdapter extends BaseQuickAdapter<CommentResult, BaseVie
     protected void convert(BaseViewHolder helper, CommentResult item) {
         helper.setText(R.id.tv_username, item.getUsername());
         helper.setText(R.id.tv_comment, "\b\b" + item.getComment());
-        helper.setProgress(R.id.rb_movie, item.getRating() * 10, 100);
+        helper.setRating(R.id.rb_movie, item.getRating());
     }
 }

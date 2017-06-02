@@ -11,11 +11,12 @@
         android:layout_height="wrap_content"
         android:text="请先评分:"
         android:textColor="@android:color/white"
-        android:textSize="25sp" />
+        android:textSize="18sp" />
 
     <RatingBar
         android:id="@+id/rb_movie"
         android:max="100"
+        style="?attr/ratingBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal" />
@@ -25,7 +26,7 @@
         android:layout_height="wrap_content"
         android:text="您的评论:"
         android:textColor="@android:color/white"
-        android:textSize="25sp" />
+        android:textSize="18sp" />
 
     <android.support.v7.widget.AppCompatEditText
         android:id="@+id/et_comment"

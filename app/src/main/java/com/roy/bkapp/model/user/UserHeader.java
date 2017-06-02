@@ -4,7 +4,7 @@ package com.roy.bkapp.model.user;
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
-public class Asd {
+public class UserHeader {
 
     @SerializedName("cdn")
     private String mCdn;
