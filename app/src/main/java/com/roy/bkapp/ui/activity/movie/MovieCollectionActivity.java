@@ -34,6 +34,7 @@ import java.util.Map;
 import butterknife.BindView;
 
 /**
+ * 电影收藏Activity
  * Created by 1vPy(Roy) on 2017/5/25.
  */
 
@@ -155,6 +156,12 @@ public class MovieCollectionActivity extends BaseSwipeBackActivity<MovieCollecti
         startActivityForResult(intent, 100);
     }
 
+    /**
+     * 判断用户在通过收藏界面进入电影详情页后是否删除收藏
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -169,6 +176,13 @@ public class MovieCollectionActivity extends BaseSwipeBackActivity<MovieCollecti
         }
     }
 
+    /**
+     * 长按删除收藏
+     * @param adapter
+     * @param view
+     * @param position
+     * @return
+     */
     @Override
     public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
         ListView listView = new ListView(this);

@@ -30,6 +30,8 @@ import java.util.List;
 import butterknife.BindView;
 
 /**
+ * 即将上映电影Fragment
+ * 代码与MovieHotFragment类似
  * Created by Administrator on 2017/5/11.
  */
 

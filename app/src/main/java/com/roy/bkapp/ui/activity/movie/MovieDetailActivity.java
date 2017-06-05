@@ -230,6 +230,10 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     }
 
 
+    /**
+     * 导演、演员合并为一个list
+     * @param jsonDetailBean
+     */
     private void initDirectorActorList(JsonDetailBean jsonDetailBean) {
         for (Directors directors : jsonDetailBean.getDirectors()) {
             DirectorActor directorActor = new DirectorActor();
@@ -378,6 +382,7 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         startActivity(intent);
     }
 
+    //加载时显示
     private void onLoading() {
         viewError.setVisibility(View.INVISIBLE);
         nsv_scroller.setVisibility(View.INVISIBLE);
@@ -385,6 +390,7 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         fab_collection.setEnabled(false);
     }
 
+    //加载出错时显示
     private void onError() {
         viewError.setVisibility(View.VISIBLE);
         nsv_scroller.setVisibility(View.INVISIBLE);
@@ -392,6 +398,7 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         fab_collection.setEnabled(false);
     }
 
+    //加载完成时显示
     private void onComplete() {
         viewError.setVisibility(View.INVISIBLE);
         nsv_scroller.setVisibility(View.VISIBLE);
@@ -399,6 +406,8 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         fab_collection.setEnabled(true);
     }
 
+
+    //控制底部菜单栏的显示与隐藏
     @Override
     public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
         if (scrollY - oldScrollY > 0 && isBottomShow) {  //下移隐藏

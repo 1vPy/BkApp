@@ -30,6 +30,8 @@ import java.util.List;
 import butterknife.BindView;
 
 /**
+ * 正在热映电影Fragment
+ *
  * Created by 1vPy(Roy) on 2017/5/11.
  */
 
@@ -88,9 +90,9 @@ public class MovieHotFragment extends BaseFragment<MovieHotView, MovieHotPresent
         ryv_movie.setLayoutManager(new LinearLayoutManager(getActivity()));
         mMovieHotAdapter = new MovieHotAdapter(R.layout.item_movie_hot, mSubjectsList);
         ryv_movie.setAdapter(mMovieHotAdapter);
-        mMovieHotAdapter.setEmptyView(R.layout.view_loading, (ViewGroup) ryv_movie.getParent());
-        mMovieHotAdapter.setLoadMoreView(new CustomLoadMoreView());
-        mMovieHotAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        mMovieHotAdapter.setEmptyView(R.layout.view_loading, (ViewGroup) ryv_movie.getParent());//加载时的loading界面
+        mMovieHotAdapter.setLoadMoreView(new CustomLoadMoreView());//设置自定义的效果
+        mMovieHotAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);//设置item加载东湖
         initData();
         initListener();
     }
@@ -100,10 +102,12 @@ public class MovieHotFragment extends BaseFragment<MovieHotView, MovieHotPresent
     }
 
     private void initListener() {
-        mMovieHotAdapter.setOnLoadMoreListener(this, ryv_movie);
+        mMovieHotAdapter.setOnLoadMoreListener(this, ryv_movie);//设置上拉加载更多监听
         mMovieHotAdapter.setOnItemClickListener(this);
-        srl_movie.setOnRefreshListener(this);
+        srl_movie.setOnRefreshListener(this);//下拉刷新监听
         fab_back_top.setOnClickListener(this);
+
+        //RecyclerView滑动监听(当第一个item消失时显示返回顶部按钮，反之显示)
         ryv_movie.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -138,6 +142,7 @@ public class MovieHotFragment extends BaseFragment<MovieHotView, MovieHotPresent
         if (mMovieHotAdapter.isLoading()) {
             mMovieHotAdapter.loadMoreComplete();
             LogUtils.log(TAG, "total:" + jsonMovieBean.getTotal() + "/current:" + (mSubjectsList.size() + jsonMovieBean.getSubjects().size()), LogUtils.DEBUG);
+            //判断是否还有更多数据
             if (jsonMovieBean.getTotal() <= (mSubjectsList.size() + jsonMovieBean.getSubjects().size())) {
                 mMovieHotAdapter.loadMoreEnd();
             }
@@ -190,6 +195,7 @@ public class MovieHotFragment extends BaseFragment<MovieHotView, MovieHotPresent
                 } else {
                     ryv_movie.scrollToPosition(0);
                 }
+                //返回顶部按钮隐藏监听
                 fab_back_top.hide(new FloatingActionButton.OnVisibilityChangedListener() {
                     @Override
                     public void onHidden(FloatingActionButton fab) {

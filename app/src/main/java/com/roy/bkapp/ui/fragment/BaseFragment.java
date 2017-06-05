@@ -35,10 +35,12 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends RootFr
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         initInject();
-        mPresenter.attachView((V) this);
+        mPresenter.attachView((V) this);//加入到弱引用中
         super.onViewCreated(view, savedInstanceState);
 
     }
+
+    //Dagger
     protected FragmentComponent getFragmentComponent(){
         return DaggerFragmentComponent.builder()
                 .appComponent(BkApplication.getAppComponent())
@@ -49,9 +51,9 @@ public abstract class BaseFragment<V, T extends BasePresenter<V>> extends RootFr
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mPresenter.detachView();
+        mPresenter.detachView();//从弱引用中移除
     }
 
-
+    //Fragment注入
     protected abstract void initInject();
 }

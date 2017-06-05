@@ -112,6 +112,9 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
         }
     };
 
+    /**
+     * splash结束动画
+     */
     private void startAnim() {
         ObjectAnimator animator = ObjectAnimator.ofFloat(viewSplash, "qwe", 1f, 0f);
         animator.setDuration(1000);
@@ -124,6 +127,11 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
         });
     }
 
+    /**
+     * fragment 切换
+     * @param hide
+     * @param show
+     */
     public void switchFragment(Fragment hide, Fragment show) {
         if (mNowFragment != show) {
             mNowFragment = show;
@@ -136,6 +144,11 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
         }
     }
 
+    /**
+     * 侧滑菜单点击事件
+     * @param item
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -176,6 +189,12 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
             }
     }*/
 
+    /**
+     * 退出监听(连续点击两次退出)
+     * @param keyCode
+     * @param event
+     * @return
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_MENU && dl_main != null) {
@@ -201,6 +220,10 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
         return super.onKeyDown(keyCode, event);
     }
 
+    /**
+     * 侧滑菜单头部点击事件
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()){

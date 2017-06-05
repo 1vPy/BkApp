@@ -9,6 +9,8 @@ import com.jude.swipbackhelper.SwipeBackHelper;
 import com.roy.bkapp.presenter.BasePresenter;
 
 /**
+ * 侧滑后退的BaseActivity
+ *
  * Created by 1vPy(Roy) on 2017/5/10.
  */
 

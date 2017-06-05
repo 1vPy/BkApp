@@ -20,13 +20,14 @@ public abstract class RootFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        unbinder = ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);//ButterKnife绑定
         initViewAndEvent();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        //ButterKnife解绑
         if (unbinder != null) {
             unbinder.unbind();
         }
