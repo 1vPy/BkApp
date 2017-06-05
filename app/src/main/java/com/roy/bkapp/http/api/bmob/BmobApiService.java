@@ -11,10 +11,18 @@ import com.roy.bkapp.model.user_movie.praise.PraiseResult;
 import com.roy.bkapp.utils.JsonUtils;
 import com.roy.bkapp.utils.LogUtils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 
 /**
  * Created by Administrator on 2017/5/17.
@@ -152,7 +160,7 @@ public class BmobApiService {
     }
 
 
-    public void commentNum(String movieId,RequestCallback<Integer> requestCallback){
+    public void commentNum(String movieId, RequestCallback<Integer> requestCallback) {
         CommentResult result = new CommentResult();
         result.setMovieId(movieId);
         String json = JsonUtils.JavaBean2Json(result);
@@ -176,7 +184,7 @@ public class BmobApiService {
     }
 
 
-    public void commentQuery(String movieId,RequestCallback<CommentMovie> requestCallback){
+    public void commentQuery(String movieId, RequestCallback<CommentMovie> requestCallback) {
         CommentResult result = new CommentResult();
         result.setMovieId(movieId);
         String json = JsonUtils.JavaBean2Json(result);
@@ -200,7 +208,7 @@ public class BmobApiService {
     }
 
 
-    public void addComment(String comment,String username,String movieId,float rating, RequestCallback<String> requestCallback){
+    public void addComment(String comment, String username, String movieId, float rating, RequestCallback<String> requestCallback) {
         CommentResult result = new CommentResult();
         result.setMovieId(movieId);
         result.setUsername(username);
@@ -224,5 +232,53 @@ public class BmobApiService {
                         }
                     }
                 }, throwable -> requestCallback.onFailure(throwable.getLocalizedMessage()));
+    }
+
+    public void uploadCrash(String path, RequestCallback<String> requestCallback) {
+        LogUtils.log(TAG, path, LogUtils.DEBUG);
+        File f = new File(path);
+        RequestBody file = RequestBody.create(MediaType.parse("application/octet-stream"), txt2String(f));
+        mBmobApi.uploadCrash("Crash.txt", file)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(responseBodyResponse -> {
+                    LogUtils.log(TAG, "上传", LogUtils.DEBUG);
+                    if (responseBodyResponse.isSuccessful()) {
+                        requestCallback.onSuccess("上传成功");
+                    } else {
+                        switch (responseBodyResponse.code()) {
+                            case 404:
+                                requestCallback.onFailure(JsonUtils.Json2JavaBean(responseBodyResponse.errorBody().string(), ErrorBean.class).getError());
+                                break;
+                            default:
+                                requestCallback.onFailure("未知错误");
+                                break;
+                        }
+                    }
+                }, throwable -> {
+                    requestCallback.onFailure(throwable.getLocalizedMessage());
+                    LogUtils.log(TAG, throwable.getLocalizedMessage(), LogUtils.DEBUG);
+                });
+    }
+
+    /**
+     * 读取txt文件的内容
+     *
+     * @param file 想要读取的文件对象
+     * @return 返回文件内容
+     */
+    public static String txt2String(File file) {
+        StringBuilder result = new StringBuilder();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));//构造一个BufferedReader类来读取文件
+            String s = null;
+            while ((s = br.readLine()) != null) {//使用readLine方法，一次读一行
+                result.append(System.lineSeparator() + s);
+            }
+            br.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result.toString();
     }
 }

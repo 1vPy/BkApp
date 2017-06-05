@@ -28,8 +28,8 @@ public class BkApplication extends Application {
 
     private void init() {
         initBkKit();
-        initDagger();
         initShareSDK();
+        initCrashHandler();
 
     }
 
@@ -41,8 +41,8 @@ public class BkApplication extends Application {
         BkKit.setContext(getApplicationContext());
     }
 
-    private void initDagger() {
-
+    private void initCrashHandler(){
+        CrashHandler.getInstance().init(getApplicationContext());
     }
 
     public static AppComponent getAppComponent() {
