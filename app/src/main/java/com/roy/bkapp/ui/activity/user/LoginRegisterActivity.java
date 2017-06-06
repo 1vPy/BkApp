@@ -84,12 +84,7 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
             this.finish();
         }
         mToolbar.setTitle("用户登录");
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LoginRegisterActivity.this.finish();
-            }
-        });
+        mToolbar.setNavigationOnClickListener(v -> LoginRegisterActivity.this.finish());
         btn_login.setOnClickListener(this);
         link_register.setOnClickListener(this);
         btn_register.setOnClickListener(this);
@@ -100,7 +95,9 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
     @Override
     public void loginSuccess(UserBean userBean) {
         dialog.dismiss();
-        UserPreference.getUserPreference(this).saveUserInfo(new UserInfo(login_username.getText().toString(), login_password.getText().toString()));
+        UserPreference.getUserPreference(this).saveUserInfo(new UserInfo(userBean.getObjectId(), login_username.getText().toString(), login_password.getText().toString()));
+        UserPreference.getUserPreference(this).saveSessionToken(userBean.getSessionToken());
+        mPresenter.uploadOrUpdateSessionToken(userBean.getUsername(),userBean.getSessionToken());
         SnackBarUtils.LongSnackbar(view_login_register, "登陆成功：" + userBean.getUsername(), SnackBarUtils.Info).show();
         UserCenterActivity.start(this);
         this.finish();

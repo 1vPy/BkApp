@@ -5,16 +5,26 @@ package com.roy.bkapp.model.user;
  */
 
 public class UserInfo {
+    private String objectId;
     private String username;
     private String password;
 
-    public UserInfo(){
+    public UserInfo() {
 
     }
 
-    public UserInfo(String username,String password){
+    public UserInfo(String objectId, String username, String password) {
+        this.objectId = objectId;
         this.username = username;
         this.password = password;
+    }
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
     }
 
     public String getUsername() {

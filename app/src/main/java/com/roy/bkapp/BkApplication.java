@@ -1,12 +1,18 @@
 package com.roy.bkapp;
 
 import android.app.Application;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 
 import com.roy.bkapp.dagger.component.AppComponent;
 import com.roy.bkapp.dagger.component.DaggerAppComponent;
 import com.roy.bkapp.dagger.module.ApplicationModule;
 import com.roy.bkapp.dagger.module.DataModule;
 import com.roy.bkapp.dagger.module.HttpModule;
+import com.roy.bkapp.http.RequestCallback;
+import com.roy.bkapp.model.user.login_config.LoginConfig;
+import com.roy.bkapp.utils.UserPreference;
 
 /**
  * Created by 1vPy(Roy) on 2017/5/10.
@@ -30,7 +36,6 @@ public class BkApplication extends Application {
         initBkKit();
         initShareSDK();
         initCrashHandler();
-
     }
 
     private void initShareSDK() {
@@ -55,4 +60,5 @@ public class BkApplication extends Application {
         }
         return appComponent;
     }
+
 }

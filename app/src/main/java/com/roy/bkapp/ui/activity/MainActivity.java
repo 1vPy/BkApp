@@ -14,6 +14,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -24,12 +26,16 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.roy.bkapp.BkApplication;
 import com.roy.bkapp.R;
+import com.roy.bkapp.http.RequestCallback;
+import com.roy.bkapp.model.user.login_config.LoginConfig;
 import com.roy.bkapp.ui.activity.movie.MovieCollectionActivity;
 import com.roy.bkapp.ui.activity.user.LoginRegisterActivity;
 import com.roy.bkapp.ui.fragment.movie.MovieFragment;
 import com.roy.bkapp.ui.fragment.music.MusicFragment;
 import com.roy.bkapp.utils.SnackBarUtils;
+import com.roy.bkapp.utils.UserPreference;
 
 import java.lang.reflect.Field;
 
@@ -65,6 +71,36 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initLogin();
+    }
+
+    public void initLogin() {
+        if (UserPreference.getUserPreference(this).readUserInfo() != null) {
+            if (UserPreference.getUserPreference(this).readSessionToken() != null) {
+                BkApplication.getAppComponent().getBmobApiService().loginConfig(UserPreference.getUserPreference(this).readUserInfo().getUsername(), new RequestCallback<LoginConfig>() {
+                    @Override
+                    public void onSuccess(LoginConfig loginConfig) {
+                        if (loginConfig.getResults().size() > 0) {
+                            if (!TextUtils.equals(loginConfig.getResults().get(0).getSessionToken(), UserPreference.getUserPreference(MainActivity.this).readSessionToken())) {
+                                UserPreference.getUserPreference(getApplicationContext()).clearUserInfo();
+                                new AlertDialog.Builder(MainActivity.this)
+                                        .setTitle("警告")
+                                        .setMessage("您的账号在其他设备上登录了，请注意！")
+                                        .setCancelable(false)
+                                        .setNegativeButton("重新登录", (dialog, which) -> LoginRegisterActivity.start(MainActivity.this))
+                                        .setPositiveButton("忽略警告", (dialog, which) -> dialog.dismiss())
+                                        .show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+
+                    }
+                });
+            }
+        }
     }
 
     @Override
@@ -129,6 +165,7 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
 
     /**
      * fragment 切换
+     *
      * @param hide
      * @param show
      */
@@ -146,6 +183,7 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
 
     /**
      * 侧滑菜单点击事件
+     *
      * @param item
      * @return
      */
@@ -191,6 +229,7 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
 
     /**
      * 退出监听(连续点击两次退出)
+     *
      * @param keyCode
      * @param event
      * @return
@@ -222,11 +261,12 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
 
     /**
      * 侧滑菜单头部点击事件
+     *
      * @param v
      */
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.user_login:
                 LoginRegisterActivity.start(this);
                 break;
