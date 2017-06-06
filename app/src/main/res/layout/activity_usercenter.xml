@@ -6,35 +6,68 @@
 
     <include layout="@layout/toolbar_common" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:orientation="horizontal">
+    <LinearLayout style="@style/wrap_layout">
+        <!-- 上圆角-->
+        <LinearLayout style="@style/top_layout">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/avatar_default"/>
 
-        <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp" />
+            <TextView
+                style="@style/usertext"
+                android:text="1vPy" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:paddingLeft="10dp" />
+            <ImageView style="@style/img_arrow" />
+        </LinearLayout>
+
+        <!-- 分割线 -->
+        <View style="@style/bg_line" />
+        <!-- 无圆角-->
+        <LinearLayout style="@style/mid_layout">
+
+            <TextView
+                style="@style/usertext"
+                android:text="我的资料" />
+
+            <ImageView style="@style/img_arrow" />
+        </LinearLayout>
+
+        <View style="@style/bg_line" />
+        <!-- 下圆角-->
+        <LinearLayout style="@style/bottom_layout">
+
+            <TextView
+                style="@style/usertext"
+                android:text="消息通知" />
+
+            <ImageView style="@style/img_arrow" />
+        </LinearLayout>
+
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/white" />
+
+    <!-- 全圆角-->
+    <LinearLayout style="@style/wrap_layout">
+
+        <LinearLayout style="@style/single_layout">
+
+            <TextView
+                style="@style/usertext"
+                android:text="辅助功能" />
+
+            <ImageView style="@style/img_arrow" />
+        </LinearLayout>
+
+    </LinearLayout>
+
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_logout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@android:color/holo_red_dark"
+        android:background="@color/red_base"
         android:text="注销"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
