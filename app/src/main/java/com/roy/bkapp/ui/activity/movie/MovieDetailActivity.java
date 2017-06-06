@@ -156,6 +156,7 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
             mPresenter.isCollected(mId);
             mPresenter.praiseNum(mId);
             if (UserPreference.getUserPreference(this).readUserInfo() != null) {
+                tv_detail_bottom_praise.setEnabled(false);
                 mPresenter.isPraise(mId, UserPreference.getUserPreference(this).readUserInfo().getUsername());
             }
         }
@@ -167,7 +168,6 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         viewError = (RelativeLayout) parent.findViewById(R.id.view_error);
         viewLoading = (LinearLayout) parent.findViewById(R.id.view_loading);
 
-        tv_detail_bottom_praise.setEnabled(false);
 
         viewError.setOnClickListener(this);
         fab_collection.setOnClickListener(this);

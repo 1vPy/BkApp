@@ -116,7 +116,6 @@
                         android:layout_marginBottom="24dp"
                         android:src="@mipmap/ic_launcher" />
 
-                    <!--  Name Label -->
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -131,7 +130,7 @@
                             android:inputType="textCapWords" />
                     </android.support.design.widget.TextInputLayout>
 
-                    <!-- Email Label -->
+
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -146,7 +145,38 @@
                             android:inputType="textEmailAddress" />
                     </android.support.design.widget.TextInputLayout>
 
-                    <!-- Password Label -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_weight="2">
+
+                            <com.roy.bkapp.widget.ClearableEditTextWithIcon
+                                android:id="@+id/msg_confirm"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="验证码"
+                                android:inputType="textEmailAddress" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.v7.widget.AppCompatButton
+                            android:id="@+id/btn_msg"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_weight="1"
+                            android:text="发送验证码"/>
+                    </LinearLayout>
+
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

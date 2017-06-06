@@ -4,6 +4,7 @@ import com.roy.bkapp.http.RequestCallback;
 import com.roy.bkapp.model.movie.JsonMovieBean;
 import com.roy.bkapp.model.movie.details.JsonDetailBean;
 import com.roy.bkapp.model.movie.star.JsonStarBean;
+import com.roy.bkapp.utils.LogUtils;
 
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -14,6 +15,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class DoubanApiService {
+    private static final String TAG = DoubanApiService.class.getSimpleName();
     private DoubanApi mDoubanApi;
 
     public DoubanApiService(DoubanApi doubanApi) {
@@ -21,6 +23,7 @@ public class DoubanApiService {
     }
 
     public void getHotMovie(int start, int count, String city, final RequestCallback<JsonMovieBean> rc) {
+        LogUtils.log(TAG, start + count + city, LogUtils.DEBUG);
         mDoubanApi.getHotMovie(start, count, city)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -30,7 +33,11 @@ public class DoubanApiService {
                     } else {
                         rc.onFailure("没有数据");
                     }
-                }, throwable -> rc.onFailure("加载出错：" + throwable.getLocalizedMessage()));
+                }, throwable -> {
+                    LogUtils.log(TAG, throwable.toString(), LogUtils.DEBUG);
+                    rc.onFailure("加载出错：" + throwable.getLocalizedMessage());
+
+                });
 
     }
 
