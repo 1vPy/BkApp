@@ -10,6 +10,7 @@ import com.roy.bkapp.R;
 import com.roy.bkapp.ui.activity.BaseSwipeBackActivity;
 import com.roy.bkapp.ui.activity.RootActivity;
 import com.roy.bkapp.utils.BrowserLayout;
+import com.roy.bkapp.utils.ToastUtils;
 
 import butterknife.BindView;
 
@@ -46,7 +47,7 @@ public class WebViewActivity extends RootActivity implements BrowserLayout.OnRec
         if (!TextUtils.isEmpty(mUrl)) {
             bl_webview.loadUrl(mUrl);
         } else {
-            Toast.makeText(this, "获取URL地址失败", Toast.LENGTH_SHORT).show();
+            ToastUtils.showToast(R.string.url_error);
         }
     }
 

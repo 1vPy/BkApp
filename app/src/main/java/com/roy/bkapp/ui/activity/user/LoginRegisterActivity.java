@@ -26,6 +26,7 @@ import com.roy.bkapp.ui.view.user.LoginRegisterView;
 import com.roy.bkapp.utils.JsonUtils;
 import com.roy.bkapp.utils.SmsErrorUtils;
 import com.roy.bkapp.utils.SnackBarUtils;
+import com.roy.bkapp.utils.ToastUtils;
 import com.roy.bkapp.utils.UserPreference;
 import com.roy.bkapp.widget.ClearableEditTextWithIcon;
 
@@ -98,7 +99,7 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
             UserCenterActivity.start(this);
             this.finish();
         }
-        mToolbar.setTitle("用户登录");
+        mToolbar.setTitle(R.string.user_login);
         mToolbar.setNavigationOnClickListener(v -> LoginRegisterActivity.this.finish());
         btn_login.setOnClickListener(this);
         link_register.setOnClickListener(this);
@@ -114,7 +115,7 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
         UserPreference.getUserPreference(this).saveUserInfo(new UserInfo(userBean.getObjectId(), login_username.getText().toString(), login_password.getText().toString()));
         UserPreference.getUserPreference(this).saveSessionToken(userBean.getSessionToken());
         mPresenter.uploadOrUpdateSessionToken(userBean.getUsername(), userBean.getSessionToken());
-        SnackBarUtils.LongSnackbar(view_login_register, "登陆成功：" + userBean.getUsername(), SnackBarUtils.Info).show();
+        SnackBarUtils.LongSnackbar(view_login_register, getString(R.string.login_success)+"：" + userBean.getUsername(), SnackBarUtils.Info).show();
         UserCenterActivity.start(this);
         this.finish();
     }
@@ -122,7 +123,7 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
     @Override
     public void registerSuccess(UserBean userBean) {
         dialog.dismiss();
-        SnackBarUtils.LongSnackbar(view_login_register, "注册成功", SnackBarUtils.Info).show();
+        SnackBarUtils.LongSnackbar(view_login_register, getString(R.string.register_success), SnackBarUtils.Info).show();
         login_username.setText(register_username.getText().toString());
         login_password.setText(register_password.getText().toString());
         register_username.setText("");
@@ -141,7 +142,10 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login:
-                dialog.setMessage("登录中...");
+                if(!loginValidate()){
+                    return;
+                }
+                dialog.setMessage(getString(R.string.logining));
                 dialog.show();
                 mPresenter.login(login_username.getText().toString(), login_password.getText().toString());
                 break;
@@ -161,13 +165,25 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
         }
     }
 
+    private boolean loginValidate(){
+        if(login_username.getText().toString().isEmpty()){
+            login_username.setError(getString(R.string.username_not_null));
+            return false;
+        }
+        if(login_password.getText().toString().isEmpty()){
+            login_password.setError(getString(R.string.password_not_null));
+            return false;
+        }
+        return true;
+    }
+
     private void switchMode() {
         if (isLoginMode) {
-            mToolbar.setTitle("用户注册");
+            mToolbar.setTitle(R.string.user_register);
             part_login.setVisibility(View.INVISIBLE);
             part_register.setVisibility(View.VISIBLE);
         } else {
-            mToolbar.setTitle("用户登录");
+            mToolbar.setTitle(R.string.user_login);
             part_login.setVisibility(View.VISIBLE);
             part_register.setVisibility(View.INVISIBLE);
         }
@@ -212,13 +228,13 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
             switch (msg.what) {
                 case 0:
                     btn_msg.setEnabled(false);
-                    Toast.makeText(LoginRegisterActivity.this, "验证码已经发送",Toast.LENGTH_SHORT).show();
+                    ToastUtils.showToast(R.string.msg_sent);
                     break;
                 case 1:
                     Toast.makeText(LoginRegisterActivity.this, SmsErrorUtils.getErrorMsg(JsonUtils.Json2JavaBean(((Throwable) msg.obj).getLocalizedMessage(), SmsResults.class).getStatus()), Toast.LENGTH_LONG).show();
                     break;
                 case 2:
-                    dialog.setMessage("正在注册...");
+                    dialog.setMessage(getString(R.string.registering));
                     dialog.show();
                     UserBean userBean = new UserBean();
                     userBean.setUsername(register_username.getText().toString());
@@ -239,7 +255,7 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
 
         @Override
         public void onFinish() {
-            btn_msg.setText("重新获取");
+            btn_msg.setText(getString(R.string.msg_retry));
             btn_msg.setEnabled(true);
         }
     };

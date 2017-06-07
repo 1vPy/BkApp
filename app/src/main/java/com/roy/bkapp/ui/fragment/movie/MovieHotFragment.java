@@ -137,7 +137,7 @@ public class MovieHotFragment extends BaseFragment<MovieHotView, MovieHotPresent
             srl_movie.setRefreshing(false);
             mSubjectsList.clear();
             mMovieHotAdapter.setNewData(mSubjectsList);
-            SnackBarUtils.LongSnackbar(cdl_root, "刷新成功", SnackBarUtils.Info).show();
+            SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.refresh_success), SnackBarUtils.Info).show();
         }
         if (mMovieHotAdapter.isLoading()) {
             mMovieHotAdapter.loadMoreComplete();
@@ -155,7 +155,7 @@ public class MovieHotFragment extends BaseFragment<MovieHotView, MovieHotPresent
     public void showError(String message) {
         if (srl_movie.isRefreshing()) {
             srl_movie.setRefreshing(false);
-            SnackBarUtils.LongSnackbar(cdl_root, "刷新失败", SnackBarUtils.Warning).show();
+            SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.refresh_failed), SnackBarUtils.Warning).show();
         } else {
             SnackBarUtils.LongSnackbar(cdl_root, message, SnackBarUtils.Warning).show();
         }
@@ -200,7 +200,7 @@ public class MovieHotFragment extends BaseFragment<MovieHotView, MovieHotPresent
                     @Override
                     public void onHidden(FloatingActionButton fab) {
                         super.onHidden(fab);
-                        SnackBarUtils.LongSnackbar(cdl_root, "已到顶部", SnackBarUtils.Info).show();
+                        SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.is_top), SnackBarUtils.Info).show();
                     }
                 });
                 break;

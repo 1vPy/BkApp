@@ -16,6 +16,7 @@ import com.roy.bkapp.model.user_movie.SuccessBean;
 import com.roy.bkapp.model.user_movie.praise.PraiseResult;
 import com.roy.bkapp.utils.JsonUtils;
 import com.roy.bkapp.utils.LogUtils;
+import com.roy.bkapp.utils.ToastUtils;
 import com.roy.bkapp.utils.UserPreference;
 
 import java.io.BufferedReader;
@@ -372,7 +373,7 @@ public class BmobApiService {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(responseBodyResponse -> {
-                    Toast.makeText(BkKit.getContext(), "上传成功", Toast.LENGTH_LONG).show();
+                    ToastUtils.showToast("上传成功");
                     LogUtils.log(TAG, "上传成功", LogUtils.DEBUG);
                 })
                 .doOnError(throwable -> LogUtils.log(TAG, "error:" + throwable.getLocalizedMessage(), LogUtils.DEBUG))

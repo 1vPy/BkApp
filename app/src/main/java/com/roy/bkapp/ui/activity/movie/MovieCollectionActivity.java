@@ -80,7 +80,7 @@ public class MovieCollectionActivity extends BaseSwipeBackActivity<MovieCollecti
 
     @Override
     protected void initViewAndEvent() {
-        mToolbar.setTitle("电影收藏");
+        mToolbar.setTitle(R.string.movie_collection);
         mToolbar.setNavigationOnClickListener(v -> this.finish());
         ryv_collection.setLayoutManager(new LinearLayoutManager(this));
         mMovieCollectionAdapter = new MovieCollectionAdapter(R.layout.item_collection, mMovieCollectionList);
@@ -124,7 +124,7 @@ public class MovieCollectionActivity extends BaseSwipeBackActivity<MovieCollecti
                     @Override
                     public void onHidden(FloatingActionButton fab) {
                         super.onHidden(fab);
-                        SnackBarUtils.LongSnackbar(cdl_root, "已到顶部", SnackBarUtils.Info).show();
+                        SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.is_top), SnackBarUtils.Info).show();
                     }
                 });
                 break;
@@ -208,7 +208,7 @@ public class MovieCollectionActivity extends BaseSwipeBackActivity<MovieCollecti
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>(2);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("menu_icon", R.drawable.icon_delete);
-        map.put("menu_name", "删除");
+        map.put("menu_name", getString(R.string.delete));
         list.add(map);
 
         return list;

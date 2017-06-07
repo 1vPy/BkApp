@@ -18,6 +18,7 @@ import com.roy.bkapp.ui.activity.BaseSwipeBackActivity;
 import com.roy.bkapp.ui.adapter.movie.MovieCommentAdapter;
 import com.roy.bkapp.ui.view.movie.MovieCommentView;
 import com.roy.bkapp.utils.LogUtils;
+import com.roy.bkapp.utils.ToastUtils;
 import com.roy.bkapp.utils.UserPreference;
 
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class MovieCommentActivity extends BaseSwipeBackActivity<MovieCommentView
 
     @Override
     protected void initViewAndEvent() {
-        mToolbar.setTitle("电影评论");
+        mToolbar.setTitle(R.string.movie_comment);
         mToolbar.setNavigationOnClickListener(v -> this.finish());
         if (getIntent() != null) {
             mId = getIntent().getStringExtra("movieId");
@@ -109,7 +110,7 @@ public class MovieCommentActivity extends BaseSwipeBackActivity<MovieCommentView
                 if(UserPreference.getUserPreference(this).readUserInfo()!= null){
                     MovieRatingActivity.start(this,mId);
                 }else{
-                    Toast.makeText(this, "登陆后才能发表评论", Toast.LENGTH_LONG).show();
+                    ToastUtils.showToast(R.string.login_comment);
                 }
                 break;
         }

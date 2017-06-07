@@ -15,6 +15,7 @@ import com.roy.bkapp.dagger.component.DaggerAppComponent;
 import com.roy.bkapp.http.RequestCallback;
 import com.roy.bkapp.http.api.bmob.BmobApiService;
 import com.roy.bkapp.utils.LogUtils;
+import com.roy.bkapp.utils.ToastUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -66,7 +67,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         }
         new Thread(() -> {
             Looper.prepare();
-            Toast.makeText(BkKit.getContext(),"哎呀，程序发生异常啦...,正在上传异常文件",Toast.LENGTH_LONG).show();
+            ToastUtils.showLongToast("哎呀，程序发生异常啦...,正在上传异常文件");
             Looper.loop();
         }).start();
         ex.printStackTrace();

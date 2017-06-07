@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -8,13 +9,18 @@
 
     <LinearLayout style="@style/wrap_layout">
         <!-- 上圆角-->
-        <LinearLayout style="@style/top_layout">
+        <LinearLayout
+            android:id="@+id/user_info"
+            style="@style/top_layout">
+
             <ImageView
+                android:id="@+id/user_header"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/avatar_default"/>
+                android:src="@drawable/avatar_default" />
 
             <TextView
+                android:id="@+id/user_name"
                 style="@style/usertext"
                 android:text="1vPy" />
 
@@ -28,9 +34,13 @@
 
             <TextView
                 style="@style/usertext"
-                android:text="我的资料" />
+                android:text="消息推送" />
 
-            <ImageView style="@style/img_arrow" />
+            <com.kyleduo.switchbutton.SwitchButton
+                android:id="@+id/sbtn_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
         <View style="@style/bg_line" />
@@ -39,9 +49,13 @@
 
             <TextView
                 style="@style/usertext"
-                android:text="消息通知" />
+                android:text="收藏同步" />
 
-            <ImageView style="@style/img_arrow" />
+            <com.kyleduo.switchbutton.SwitchButton
+                android:id="@+id/sbtn_sync"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
     </LinearLayout>

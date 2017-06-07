@@ -109,7 +109,7 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
         user_login = (Button) headerView.findViewById(R.id.user_login);
         user_login.setOnClickListener(this);
 
-        mToolbar.setTitle("电影");
+        mToolbar.setTitle(R.string.movie);
         mFragmentManager = getSupportFragmentManager();
         mMovieFragment = MovieFragment.newInstance();
         mMusicFragment = MusicFragment.newInstance();
@@ -192,11 +192,11 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
         switch (item.getItemId()) {
             case R.id.item_movie:
                 switchFragment(mNowFragment, mMovieFragment);
-                mToolbar.setTitle("电影");
+                mToolbar.setTitle(R.string.movie);
                 break;
             case R.id.item_music:
                 switchFragment(mNowFragment, mMusicFragment);
-                mToolbar.setTitle("音乐");
+                mToolbar.setTitle(R.string.music);
                 break;
             case R.id.item_collection:
                 MovieCollectionActivity.start(this);

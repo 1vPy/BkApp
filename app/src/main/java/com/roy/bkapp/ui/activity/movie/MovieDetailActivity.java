@@ -267,14 +267,14 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     public void collectionSuccess(String s) {
         fab_collection.setSelected(true);
         isCollected = true;
-        SnackBarUtils.LongSnackbar(cdl_root, "收藏成功", SnackBarUtils.Info).show();
+        SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.collect_success), SnackBarUtils.Info).show();
     }
 
     @Override
     public void deleteSuccess(String s) {
         fab_collection.setSelected(false);
         isCollected = false;
-        SnackBarUtils.LongSnackbar(cdl_root, "收藏已删除", SnackBarUtils.Info).show();
+        SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.collect_delete), SnackBarUtils.Info).show();
     }
 
 
@@ -314,7 +314,7 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
         tv_detail_bottom_praise.setCompoundDrawables(null, drawable, null, null);
         tv_detail_bottom_praise.setText("点赞(" + (praiseNum + 1) + ")");
-        SnackBarUtils.LongSnackbar(cdl_root, "点赞成功", SnackBarUtils.Info).show();
+        SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.praise_success), SnackBarUtils.Info).show();
 
     }
 
@@ -365,12 +365,12 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
 
     private void praise() {
         if (isPraise) {
-            SnackBarUtils.LongSnackbar(cdl_root, "您已经点过赞了，请不要重复点赞", SnackBarUtils.Info).show();
+            SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.not_praise_again), SnackBarUtils.Info).show();
         } else {
             if (UserPreference.getUserPreference(this).readUserInfo() != null) {
                 mPresenter.addPraise(mId, UserPreference.getUserPreference(this).readUserInfo().getUsername());
             } else {
-                SnackBarUtils.LongSnackbar(cdl_root, "请先登录，再进行点赞", SnackBarUtils.Warning).show();
+                SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.login_praise), SnackBarUtils.Warning).show();
             }
         }
     }

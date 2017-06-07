@@ -57,7 +57,7 @@ public class MusicFragment extends RootFragment{
         //mMusicSheetsFragment = mMusicSheetsFragment.newInstance();
         mFragmentList.add(mMusicBillFragment);
         //mFragmentList.add(mMusicSheetsFragment);
-        mTitleList.add("音乐榜");
+        mTitleList.add(getString(R.string.music_bill));
         //mTitleList.add(getString(R.string.my_music));
 
         mDouBaseFragmentAdapter = new DouBaseFragmentAdapter(getChildFragmentManager(), mTitleList, mFragmentList);

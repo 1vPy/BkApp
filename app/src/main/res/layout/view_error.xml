@@ -8,6 +8,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="请求异常，点击重试"
+        android:text="@string/error_retry"
         android:textColor="@android:color/white"/>
 </RelativeLayout>

@@ -59,8 +59,8 @@ public class MovieFragment extends RootFragment {
         mMovieComeUpFragment = MovieComeUpFragment.newInstance();
         mFragmentList.add(mMovieHotFragment);
         mFragmentList.add(mMovieComeUpFragment);
-        mTitleList.add("近期热播");
-        mTitleList.add("即将上映");
+        mTitleList.add(getString(R.string.movie_hot));
+        mTitleList.add(getString(R.string.movie_comeup));
         mDouBaseFragmentAdapter = new DouBaseFragmentAdapter(getChildFragmentManager(), mTitleList, mFragmentList);
         vp_movie.setAdapter(mDouBaseFragmentAdapter);
         vp_movie.setOffscreenPageLimit(3);

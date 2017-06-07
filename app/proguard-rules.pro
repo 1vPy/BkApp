@@ -39,6 +39,7 @@
 -keep class com.bumptech.**{*;}
 -keep class dagger.**{*;}
 -keep class javax.**{*;}
+-keep class com.kyleduo.**{*;}
 
 #ignore warning
 -dontwarn android.support.**

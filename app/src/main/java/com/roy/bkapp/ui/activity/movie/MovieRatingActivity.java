@@ -14,6 +14,7 @@ import com.roy.bkapp.R;
 import com.roy.bkapp.presenter.movie.MovieRatingPresenter;
 import com.roy.bkapp.ui.activity.BaseSwipeBackActivity;
 import com.roy.bkapp.ui.view.movie.MovieRatingView;
+import com.roy.bkapp.utils.ToastUtils;
 import com.roy.bkapp.utils.UserPreference;
 
 import butterknife.BindView;
@@ -67,13 +68,13 @@ public class MovieRatingActivity extends BaseSwipeBackActivity<MovieRatingView, 
 
     @Override
     public void ratingSuccess(String s) {
-        Toast.makeText(this, "发表成功", Toast.LENGTH_LONG).show();
+        ToastUtils.showToast("发表成功");
         this.finish();
     }
 
     @Override
     public void showError(String message) {
-        Toast.makeText(this, "发表失败：" + message, Toast.LENGTH_LONG).show();
+        ToastUtils.showToast("发表失败：" + message);
 
     }
 
@@ -88,9 +89,9 @@ public class MovieRatingActivity extends BaseSwipeBackActivity<MovieRatingView, 
 
     private void publish() {
         if (rb_movie.getProgress() <= 0) {
-            Toast.makeText(this, "请完成评分后发表", Toast.LENGTH_LONG).show();
+            ToastUtils.showToast("请完成评分后发表");
         } else if (et_comment.getText().toString().trim().isEmpty()) {
-            Toast.makeText(this, "评论不能为空", Toast.LENGTH_LONG).show();
+            ToastUtils.showToast("评论不能为空");
         } else {
             mPresenter.addComment(et_comment.getText().toString().trim(), UserPreference.getUserPreference(this).readUserInfo().getUsername(), mId, rb_movie.getRating());
         }
