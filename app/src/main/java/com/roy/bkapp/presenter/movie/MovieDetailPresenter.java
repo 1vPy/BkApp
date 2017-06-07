@@ -6,8 +6,10 @@ import com.roy.bkapp.http.api.bmob.BmobApiService;
 import com.roy.bkapp.http.api.douban.DoubanApiService;
 import com.roy.bkapp.model.collection.MovieCollection;
 import com.roy.bkapp.model.movie.details.JsonDetailBean;
+import com.roy.bkapp.model.user.UserInfo;
 import com.roy.bkapp.presenter.BasePresenter;
 import com.roy.bkapp.ui.view.movie.MovieDetailView;
+import com.roy.bkapp.utils.UserPreference;
 
 import javax.inject.Inject;
 
@@ -23,12 +25,15 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView>{
 
     private BmobApiService mBmobApiService;
 
+    private UserPreference mUserPreference;
+
 
     @Inject
-    public MovieDetailPresenter(DoubanApiService doubanApiService,DbHelperService dbHelperService,BmobApiService bmobApiService){
+    public MovieDetailPresenter(DoubanApiService doubanApiService,DbHelperService dbHelperService,BmobApiService bmobApiService,UserPreference userPreference){
         mDoubanApiService = doubanApiService;
         mDbHelperService = dbHelperService;
         mBmobApiService = bmobApiService;
+        mUserPreference = userPreference;
     }
 
     public void getMovieDetail(String id){
@@ -174,5 +179,9 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView>{
                 }
             }
         });
+    }
+
+    public UserInfo readUserInfo(){
+        return mUserPreference.readUserInfo();
     }
 }

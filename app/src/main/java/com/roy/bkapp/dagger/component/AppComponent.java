@@ -10,6 +10,7 @@ import com.roy.bkapp.http.api.baidu.BaiduApiService;
 import com.roy.bkapp.http.api.bmob.BmobApiService;
 import com.roy.bkapp.http.api.douban.DoubanApiService;
 import com.roy.bkapp.utils.PreferencesHelper;
+import com.roy.bkapp.utils.UserPreference;
 
 import javax.inject.Singleton;
 
@@ -32,6 +33,8 @@ public interface AppComponent {
     BmobApiService getBmobApiService();
 
     PreferencesHelper getPreferencesHelper();
+
+    UserPreference getUserPreference();
 
     DbHelper getDbHelper();
 }

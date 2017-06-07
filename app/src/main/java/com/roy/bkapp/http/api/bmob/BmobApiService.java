@@ -47,8 +47,11 @@ public class BmobApiService {
 
     private BmobApi mBmobApi;
 
-    public BmobApiService(BmobApi bmobApi) {
+    private UserPreference mUserPreference;
+
+    public BmobApiService(BmobApi bmobApi,UserPreference userPreference) {
         mBmobApi = bmobApi;
+        mUserPreference = userPreference;
     }
 
 
@@ -382,7 +385,7 @@ public class BmobApiService {
                     @Override
                     public ObservableSource<Response<ResponseBody>> apply(@NonNull Response<ResponseBody> responseBodyResponse) throws Exception {
                         UploadImg uploadImg = JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), UploadImg.class);
-                        UserPreference.getUserPreference(BkKit.getContext()).saveUserHeader(uploadImg.getUrl());
+                        mUserPreference.saveUserHeader(uploadImg.getUrl());
                         UserBean userBean = new UserBean();
                         UserHeader userHeader = new UserHeader();
                         userHeader.set_Type("File");
@@ -390,15 +393,15 @@ public class BmobApiService {
                         userHeader.setCdn(uploadImg.getCdn());
                         userHeader.setUrl(uploadImg.getUrl());
                         userBean.setUserHeader(userHeader);
-                        LogUtils.log(TAG, "getSessionToken:" + UserPreference.getUserPreference(BkKit.getContext()).readSessionToken() + ",objectId:"+UserPreference.getUserPreference(BkKit.getContext()).readUserInfo().getObjectId()+",json:" + JsonUtils.JavaBean2Json(userBean), LogUtils.DEBUG);
+                        LogUtils.log(TAG, "getSessionToken:" + mUserPreference.readSessionToken() + ",objectId:"+mUserPreference.readUserInfo().getObjectId()+",json:" + JsonUtils.JavaBean2Json(userBean), LogUtils.DEBUG);
                         RequestBody r = RequestBody.create(MediaType.parse("application/json"), JsonUtils.JavaBean2Json(userBean));
-                        return mBmobApi.updateUser(UserPreference.getUserPreference(BkKit.getContext()).readSessionToken(), UserPreference.getUserPreference(BkKit.getContext()).readUserInfo().getObjectId(), r);
+                        return mBmobApi.updateUser(mUserPreference.readSessionToken(), mUserPreference.readUserInfo().getObjectId(), r);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(responseBodyResponse -> {
                             LogUtils.log(TAG, responseBodyResponse.body().string(), LogUtils.DEBUG);
-                            rc.onSuccess(UserPreference.getUserPreference(BkKit.getContext()).readUserHeader());
+                            rc.onSuccess(mUserPreference.readUserHeader());
                         },
                         throwable -> LogUtils.log(TAG, "error:" + throwable.getLocalizedMessage(), LogUtils.DEBUG));
 

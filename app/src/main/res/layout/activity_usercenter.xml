@@ -1,89 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <include layout="@layout/toolbar_common" />
 
-    <LinearLayout style="@style/wrap_layout">
-        <!-- 上圆角-->
-        <LinearLayout
-            android:id="@+id/user_info"
-            style="@style/top_layout">
-
-            <ImageView
-                android:id="@+id/user_header"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/avatar_default" />
-
-            <TextView
-                android:id="@+id/user_name"
-                style="@style/usertext"
-                android:text="1vPy" />
-
-            <ImageView style="@style/img_arrow" />
-        </LinearLayout>
-
-        <!-- 分割线 -->
-        <View style="@style/bg_line" />
-        <!-- 无圆角-->
-        <LinearLayout style="@style/mid_layout">
-
-            <TextView
-                style="@style/usertext"
-                android:text="消息推送" />
-
-            <com.kyleduo.switchbutton.SwitchButton
-                android:id="@+id/sbtn_msg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <View style="@style/bg_line" />
-        <!-- 下圆角-->
-        <LinearLayout style="@style/bottom_layout">
-
-            <TextView
-                style="@style/usertext"
-                android:text="收藏同步" />
-
-            <com.kyleduo.switchbutton.SwitchButton
-                android:id="@+id/sbtn_sync"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-
-    <!-- 全圆角-->
-    <LinearLayout style="@style/wrap_layout">
-
-        <LinearLayout style="@style/single_layout">
-
-            <TextView
-                style="@style/usertext"
-                android:text="辅助功能" />
-
-            <ImageView style="@style/img_arrow" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btn_logout"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@color/red_base"
-        android:text="注销"
-        android:textColor="@android:color/white"
-        android:textSize="20sp" />
+        android:layout_height="wrap_content">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout style="@style/wrap_layout">
+                <!-- 上圆角-->
+                <LinearLayout
+                    android:id="@+id/avatar_set"
+                    style="@style/top_layout">
+
+                    <TextView
+                        style="@style/usertext"
+                        android:text="@string/personal_avatar" />
+
+                    <ImageView
+                        android:id="@+id/user_avatar"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/avatar_default" />
+
+                </LinearLayout>
+
+                <!-- 分割线 -->
+                <View style="@style/bg_line" />
+
+                <LinearLayout style="@style/mid_layout">
+
+                    <TextView
+                        style="@style/usertext"
+                        android:text="@string/username" />
+
+                    <TextView
+                        android:id="@+id/user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1vPy" />
+
+                </LinearLayout>
+
+                <!-- 分割线 -->
+                <View style="@style/bg_line" />
+
+                <LinearLayout style="@style/mid_layout">
+
+                    <TextView
+                        style="@style/usertext"
+                        android:text="电话" />
+
+                    <TextView
+                        android:id="@+id/user_telephone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="13260621332" />
+
+                </LinearLayout>
+
+                <View style="@style/bg_line" />
+
+                <LinearLayout
+                    android:id="@+id/email_set"
+                    style="@style/bottom_layout">
+
+                    <TextView
+                        style="@style/usertext"
+                        android:text="邮箱" />
+
+                    <TextView
+                        android:id="@+id/user_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="846913426@qq.com" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- 全圆角-->
+            <LinearLayout style="@style/wrap_layout">
+
+                <LinearLayout style="@style/top_layout">
+
+                    <TextView
+                        style="@style/usertext"
+                        android:text="消息推送" />
+
+                    <com.kyleduo.switchbutton.SwitchButton
+                        android:id="@+id/sbtn_msg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <View style="@style/bg_line" />
+
+                <LinearLayout style="@style/bottom_layout">
+
+                    <TextView
+                        style="@style/usertext"
+                        android:text="收藏同步" />
+
+                    <com.kyleduo.switchbutton.SwitchButton
+                        android:id="@+id/sbtn_sync"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@color/red_base"
+                android:text="注销"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

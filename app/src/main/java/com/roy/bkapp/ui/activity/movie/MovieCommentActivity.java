@@ -107,7 +107,7 @@ public class MovieCommentActivity extends BaseSwipeBackActivity<MovieCommentView
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.iv_rating:
-                if(UserPreference.getUserPreference(this).readUserInfo()!= null){
+                if(mPresenter.readUserInfo()!= null){
                     MovieRatingActivity.start(this,mId);
                 }else{
                     ToastUtils.showToast(R.string.login_comment);

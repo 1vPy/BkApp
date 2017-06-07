@@ -155,9 +155,9 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
             mPresenter.getMovieDetail(mId);
             mPresenter.isCollected(mId);
             mPresenter.praiseNum(mId);
-            if (UserPreference.getUserPreference(this).readUserInfo() != null) {
+            if (mPresenter.readUserInfo() != null) {
                 tv_detail_bottom_praise.setEnabled(false);
-                mPresenter.isPraise(mId, UserPreference.getUserPreference(this).readUserInfo().getUsername());
+                mPresenter.isPraise(mId, mPresenter.readUserInfo().getUsername());
             }
         }
 
@@ -367,8 +367,8 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         if (isPraise) {
             SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.not_praise_again), SnackBarUtils.Info).show();
         } else {
-            if (UserPreference.getUserPreference(this).readUserInfo() != null) {
-                mPresenter.addPraise(mId, UserPreference.getUserPreference(this).readUserInfo().getUsername());
+            if (mPresenter.readUserInfo() != null) {
+                mPresenter.addPraise(mId, mPresenter.readUserInfo().getUsername());
             } else {
                 SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.login_praise), SnackBarUtils.Warning).show();
             }

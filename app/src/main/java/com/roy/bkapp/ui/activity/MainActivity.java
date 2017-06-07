@@ -24,16 +24,23 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.roy.bkapp.BkApplication;
+import com.roy.bkapp.BkKit;
 import com.roy.bkapp.R;
 import com.roy.bkapp.http.RequestCallback;
 import com.roy.bkapp.model.user.login_config.LoginConfig;
+import com.roy.bkapp.presenter.MainPresenter;
 import com.roy.bkapp.ui.activity.movie.MovieCollectionActivity;
 import com.roy.bkapp.ui.activity.user.LoginRegisterActivity;
 import com.roy.bkapp.ui.fragment.movie.MovieFragment;
 import com.roy.bkapp.ui.fragment.music.MusicFragment;
+import com.roy.bkapp.ui.listener.UserAvatarListener;
+import com.roy.bkapp.ui.view.MainView;
+import com.roy.bkapp.utils.ImageUtils;
 import com.roy.bkapp.utils.SnackBarUtils;
 import com.roy.bkapp.utils.UserPreference;
 
@@ -41,8 +48,9 @@ import java.lang.reflect.Field;
 
 import butterknife.BindView;
 
-public class MainActivity extends RootActivity implements NavigationView.OnNavigationItemSelectedListener
-        , View.OnClickListener {
+public class MainActivity extends BaseActivity<MainView,MainPresenter> implements NavigationView.OnNavigationItemSelectedListener
+        , View.OnClickListener
+        , UserAvatarListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static long DOUBLE_CLICK_TIME = 0L;
 
@@ -55,7 +63,8 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
     @BindView(R.id.nv_main)
     NavigationView nv_main;
 
-    private Button user_login;
+    private ImageView user_login;
+    private TextView user_name;
 
     private RelativeLayout viewSplash;
 
@@ -74,15 +83,20 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
         initLogin();
     }
 
+    @Override
+    protected void initInject() {
+        getActivityComponent().inject(this);
+    }
+
     public void initLogin() {
-        if (UserPreference.getUserPreference(this).readUserInfo() != null) {
-            if (UserPreference.getUserPreference(this).readSessionToken() != null) {
-                BkApplication.getAppComponent().getBmobApiService().loginConfig(UserPreference.getUserPreference(this).readUserInfo().getUsername(), new RequestCallback<LoginConfig>() {
+        if (mPresenter.readUserInfo() != null) {
+            if (mPresenter.readSessionToken() != null) {
+                BkApplication.getAppComponent().getBmobApiService().loginConfig(mPresenter.readUserInfo().getUsername(), new RequestCallback<LoginConfig>() {
                     @Override
                     public void onSuccess(LoginConfig loginConfig) {
                         if (loginConfig.getResults().size() > 0) {
-                            if (!TextUtils.equals(loginConfig.getResults().get(0).getSessionToken(), UserPreference.getUserPreference(MainActivity.this).readSessionToken())) {
-                                UserPreference.getUserPreference(getApplicationContext()).clearUserInfo();
+                            if (!TextUtils.equals(loginConfig.getResults().get(0).getSessionToken(), mPresenter.readSessionToken())) {
+                                mPresenter.clearUserInfo();
                                 new AlertDialog.Builder(MainActivity.this)
                                         .setTitle("警告")
                                         .setMessage("您的账号在其他设备上登录了，请注意！")
@@ -90,6 +104,13 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
                                         .setNegativeButton("重新登录", (dialog, which) -> LoginRegisterActivity.start(MainActivity.this))
                                         .setPositiveButton("忽略警告", (dialog, which) -> dialog.dismiss())
                                         .show();
+                            } else {
+                                user_name.setText(mPresenter.readUserInfo().getUsername());
+                                if (mPresenter.readUserHeader().length() <= 0) {
+                                    ImageUtils.displayImage(MainActivity.this, R.drawable.avatar_default, user_login);
+                                } else {
+                                    ImageUtils.displayImage(MainActivity.this,mPresenter.readUserHeader(), user_login);
+                                }
                             }
                         }
                     }
@@ -106,7 +127,8 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
     @Override
     protected void initViewAndEvent() {
         View headerView = nv_main.getHeaderView(0);
-        user_login = (Button) headerView.findViewById(R.id.user_login);
+        user_login = (ImageView) headerView.findViewById(R.id.user_login);
+        user_name = (TextView) headerView.findViewById(R.id.user_name);
         user_login.setOnClickListener(this);
 
         mToolbar.setTitle(R.string.movie);
@@ -134,6 +156,7 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
         viewSplash.setVisibility(View.VISIBLE);
         dl_main.setVisibility(View.INVISIBLE);
         new Handler().postDelayed(() -> mHandler.sendEmptyMessage(0), 2000);
+        BkKit.setUserAvatarListener(this);
     }
 
     private Handler mHandler = new Handler() {
@@ -270,6 +293,31 @@ public class MainActivity extends RootActivity implements NavigationView.OnNavig
             case R.id.user_login:
                 LoginRegisterActivity.start(this);
                 break;
+        }
+    }
+
+    @Override
+    public void login(String headerUrl) {
+        user_name.setText(mPresenter.readUserInfo().getUsername());
+        if (!headerUrl.isEmpty()) {
+            ImageUtils.displayImage(this, headerUrl, user_login);
+        } else {
+            ImageUtils.displayImage(this, R.drawable.avatar_default, user_login);
+        }
+    }
+
+    @Override
+    public void logout() {
+        ImageUtils.displayImage(this, R.drawable.avatar_default, user_login);
+        user_name.setText("点击登录");
+    }
+
+    @Override
+    public void uploadAvatar(String url) {
+        if (!url.isEmpty()) {
+            ImageUtils.displayImage(this, url, user_login);
+        } else {
+            ImageUtils.displayImage(this, R.drawable.avatar_default, user_login);
         }
     }
 }

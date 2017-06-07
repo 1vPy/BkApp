@@ -7,6 +7,7 @@ import com.roy.bkapp.http.api.bmob.BmobApi;
 import com.roy.bkapp.http.api.bmob.BmobApiService;
 import com.roy.bkapp.http.api.douban.DoubanApi;
 import com.roy.bkapp.http.api.douban.DoubanApiService;
+import com.roy.bkapp.utils.UserPreference;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -71,8 +72,8 @@ public class HttpModule {
 
     @Singleton
     @Provides
-    BmobApiService provideBmobApiService(BmobApi bmobApi){
-        return new BmobApiService(bmobApi);
+    BmobApiService provideBmobApiService(BmobApi bmobApi, UserPreference userPreference){
+        return new BmobApiService(bmobApi,userPreference);
     }
 
 

@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.roy.bkapp.BkKit;
 import com.roy.bkapp.R;
 import com.roy.bkapp.model.user.SmsResults;
 import com.roy.bkapp.model.user.UserBean;
@@ -95,7 +96,7 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
 
     @Override
     protected void initViewAndEvent() {
-        if (UserPreference.getUserPreference(this).readUserInfo() != null) {
+        if (mPresenter.readUserInfo() != null) {
             UserCenterActivity.start(this);
             this.finish();
         }
@@ -112,10 +113,16 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
     @Override
     public void loginSuccess(UserBean userBean) {
         dialog.dismiss();
-        UserPreference.getUserPreference(this).saveUserInfo(new UserInfo(userBean.getObjectId(), login_username.getText().toString(), login_password.getText().toString()));
-        UserPreference.getUserPreference(this).saveSessionToken(userBean.getSessionToken());
+        mPresenter.saveUserInfo(new UserInfo(userBean.getObjectId(), login_username.getText().toString(), login_password.getText().toString(), userBean.getMobilePhoneNumber(), userBean.getEmail()));
+        mPresenter.saveSessionToken(userBean.getSessionToken());
         mPresenter.uploadOrUpdateSessionToken(userBean.getUsername(), userBean.getSessionToken());
-        SnackBarUtils.LongSnackbar(view_login_register, getString(R.string.login_success)+"：" + userBean.getUsername(), SnackBarUtils.Info).show();
+        if (userBean.getUserHeader() != null) {
+            BkKit.getUserAvatarListener().login(userBean.getUserHeader().getUrl());
+            mPresenter.saveUserHeader(userBean.getUserHeader().getUrl());
+        } else {
+            BkKit.getUserAvatarListener().login("");
+        }
+        SnackBarUtils.LongSnackbar(view_login_register, getString(R.string.login_success) + "：" + userBean.getUsername(), SnackBarUtils.Info).show();
         UserCenterActivity.start(this);
         this.finish();
     }
@@ -142,22 +149,16 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login:
-                if(!loginValidate()){
-                    return;
-                }
-                dialog.setMessage(getString(R.string.logining));
-                dialog.show();
-                mPresenter.login(login_username.getText().toString(), login_password.getText().toString());
+                login();
                 break;
             case R.id.link_register:
                 switchMode();
                 break;
             case R.id.btn_msg:
-                SMSSDK.registerEventHandler(eventHandler);
-                SMSSDK.getVerificationCode("86", register_phone.getText().toString());
+                msg_send();
                 break;
             case R.id.btn_register:
-                SMSSDK.submitVerificationCode("86", register_phone.getText().toString(), msg_confirm.getText().toString());
+                register();
                 break;
             case R.id.link_login:
                 switchMode();
@@ -165,18 +166,73 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
         }
     }
 
-    private boolean loginValidate(){
-        if(login_username.getText().toString().isEmpty()){
+    /**
+     * 登录
+     */
+    private void login() {
+        if (!loginValidate()) {
+            return;
+        }
+        dialog.setMessage(getString(R.string.logining));
+        dialog.show();
+        mPresenter.login(login_username.getText().toString(), login_password.getText().toString());
+    }
+
+    /**
+     * 登录验证
+     *
+     * @return
+     */
+    private boolean loginValidate() {
+        if (login_username.getText().toString().isEmpty()) {
             login_username.setError(getString(R.string.username_not_null));
             return false;
         }
-        if(login_password.getText().toString().isEmpty()){
+        if (login_password.getText().toString().isEmpty()) {
             login_password.setError(getString(R.string.password_not_null));
             return false;
         }
         return true;
     }
 
+    /**
+     * 发送验证码
+     */
+    private void msg_send() {
+        SMSSDK.registerEventHandler(eventHandler);
+        SMSSDK.getVerificationCode("86", register_phone.getText().toString());
+    }
+
+    /**
+     * 注册
+     */
+    private void register() {
+        if (!registerValidate()) {
+            return;
+        }
+        SMSSDK.submitVerificationCode("86", register_phone.getText().toString(), msg_confirm.getText().toString());
+    }
+
+    /**
+     * 注册验证
+     *
+     * @return
+     */
+    private boolean registerValidate() {
+        if (register_username.getText().toString().isEmpty()) {
+            register_username.setError(getString(R.string.username_not_null));
+            return false;
+        }
+        if (register_password.getText().toString().isEmpty()) {
+            register_password.setError(getString(R.string.password_not_null));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 登录注册模式切换
+     */
     private void switchMode() {
         if (isLoginMode) {
             mToolbar.setTitle(R.string.user_register);
@@ -190,6 +246,9 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
         isLoginMode = !isLoginMode;
     }
 
+    /**
+     * 短信验证回调
+     */
     private EventHandler eventHandler = new EventHandler() {
         @Override
         public void afterEvent(int event, int result, Object data) {
@@ -247,6 +306,9 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
         }
     };
 
+    /**
+     * 计时器
+     */
     private CountDownTimer countDownTimer = new CountDownTimer(60 * 1000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {

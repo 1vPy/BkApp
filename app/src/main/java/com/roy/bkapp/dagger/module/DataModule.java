@@ -5,6 +5,7 @@ import android.content.Context;
 import com.roy.bkapp.db.DbHelperService;
 import com.roy.bkapp.db.DbHelper;
 import com.roy.bkapp.utils.PreferencesHelper;
+import com.roy.bkapp.utils.UserPreference;
 
 import javax.inject.Singleton;
 
@@ -23,7 +24,13 @@ public class DataModule {
     @Provides
     PreferencesHelper providePreferencesHelper(Context applicationContext){
         return new PreferencesHelper(applicationContext);
-    };
+    }
+
+    @Singleton
+    @Provides
+    UserPreference provideUserPreference(Context context){
+        return new UserPreference(context);
+    }
 
     @Singleton
     @Provides

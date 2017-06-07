@@ -2,9 +2,11 @@ package com.roy.bkapp.presenter.movie;
 
 import com.roy.bkapp.http.RequestCallback;
 import com.roy.bkapp.http.api.bmob.BmobApiService;
+import com.roy.bkapp.model.user.UserInfo;
 import com.roy.bkapp.model.user_movie.comment.CommentMovie;
 import com.roy.bkapp.presenter.BasePresenter;
 import com.roy.bkapp.ui.view.movie.MovieCommentView;
+import com.roy.bkapp.utils.UserPreference;
 
 import javax.inject.Inject;
 
@@ -15,10 +17,12 @@ import javax.inject.Inject;
 public class MovieCommentPresenter extends BasePresenter<MovieCommentView> {
 
     private BmobApiService mBmobApiService;
+    private UserPreference mUserPreference;
 
     @Inject
-    public MovieCommentPresenter(BmobApiService bmobApiService){
+    public MovieCommentPresenter(BmobApiService bmobApiService,UserPreference userPreference){
         mBmobApiService = bmobApiService;
+        mUserPreference = userPreference;
     }
 
     public void commentQuery(String movieId){
@@ -37,6 +41,10 @@ public class MovieCommentPresenter extends BasePresenter<MovieCommentView> {
                 }
             }
         });
+    }
+
+    public UserInfo readUserInfo(){
+        return mUserPreference.readUserInfo();
     }
 
 }

@@ -3,9 +3,11 @@ package com.roy.bkapp.presenter.user;
 import com.roy.bkapp.http.RequestCallback;
 import com.roy.bkapp.http.api.bmob.BmobApiService;
 import com.roy.bkapp.model.user.UserBean;
+import com.roy.bkapp.model.user.UserInfo;
 import com.roy.bkapp.presenter.BasePresenter;
 import com.roy.bkapp.ui.view.user.LoginRegisterView;
 import com.roy.bkapp.utils.LogUtils;
+import com.roy.bkapp.utils.UserPreference;
 
 import javax.inject.Inject;
 
@@ -16,10 +18,12 @@ import javax.inject.Inject;
 public class LoginRegisterPresenter extends BasePresenter<LoginRegisterView> {
     private static final String TAG = LoginRegisterPresenter.class.getSimpleName();
     private BmobApiService mBmobApiService;
+    private UserPreference mUserPreference;
 
     @Inject
-    public LoginRegisterPresenter(BmobApiService bmobApiService) {
+    public LoginRegisterPresenter(BmobApiService bmobApiService,UserPreference userPreference) {
         mBmobApiService = bmobApiService;
+        mUserPreference = userPreference;
     }
 
     public void login(String username, String password) {
@@ -70,5 +74,21 @@ public class LoginRegisterPresenter extends BasePresenter<LoginRegisterView> {
                 LogUtils.log(TAG, message, LogUtils.DEBUG);
             }
         });
+    }
+
+    public UserInfo readUserInfo(){
+        return mUserPreference.readUserInfo();
+    }
+
+    public void saveUserInfo(UserInfo userInfo){
+        mUserPreference.saveUserInfo(userInfo);
+    }
+
+    public void saveSessionToken(String sessionToken){
+        mUserPreference.saveSessionToken(sessionToken);
+    }
+
+    public void saveUserHeader(String url){
+        mUserPreference.saveUserHeader(url);
     }
 }
