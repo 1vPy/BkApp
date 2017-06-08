@@ -7,4 +7,5 @@ import com.roy.bkapp.ui.view.BaseView;
  */
 
 public interface UserCenterView extends BaseView{
+    void modifyAvatarSuccess(String s);
 }

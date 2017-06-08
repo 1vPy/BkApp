@@ -32,11 +32,12 @@
                     android:paddingTop="56dp">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="72dp"
+                        android:id="@+id/login_avatar"
+                        android:layout_width="74dp"
+                        android:layout_height="74dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="24dp"
-                        android:src="@mipmap/ic_launcher" />
+                        android:src="@drawable/avatar_default" />
 
                     <!-- Email Label -->
                     <android.support.design.widget.TextInputLayout
@@ -110,11 +111,12 @@
                     android:paddingTop="56dp">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="72dp"
+                        android:id="@+id/register_avatar"
+                        android:layout_width="74dp"
+                        android:layout_height="74dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="24dp"
-                        android:src="@mipmap/ic_launcher" />
+                        android:src="@drawable/avatar_default" />
 
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"

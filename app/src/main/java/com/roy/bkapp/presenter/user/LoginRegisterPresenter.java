@@ -2,14 +2,20 @@ package com.roy.bkapp.presenter.user;
 
 import com.roy.bkapp.http.RequestCallback;
 import com.roy.bkapp.http.api.bmob.BmobApiService;
+import com.roy.bkapp.model.user.UploadImg;
 import com.roy.bkapp.model.user.UserBean;
+import com.roy.bkapp.model.user.UserHeader;
 import com.roy.bkapp.model.user.UserInfo;
 import com.roy.bkapp.presenter.BasePresenter;
 import com.roy.bkapp.ui.view.user.LoginRegisterView;
 import com.roy.bkapp.utils.LogUtils;
 import com.roy.bkapp.utils.UserPreference;
 
+import java.io.File;
+
 import javax.inject.Inject;
+
+import okhttp3.MediaType;
 
 /**
  * Created by Administrator on 2017/5/17.
@@ -21,7 +27,7 @@ public class LoginRegisterPresenter extends BasePresenter<LoginRegisterView> {
     private UserPreference mUserPreference;
 
     @Inject
-    public LoginRegisterPresenter(BmobApiService bmobApiService,UserPreference userPreference) {
+    public LoginRegisterPresenter(BmobApiService bmobApiService, UserPreference userPreference) {
         mBmobApiService = bmobApiService;
         mUserPreference = userPreference;
     }
@@ -44,22 +50,40 @@ public class LoginRegisterPresenter extends BasePresenter<LoginRegisterView> {
         });
     }
 
-    public void register(UserBean userBean) {
-        mBmobApiService.register(userBean, new RequestCallback<UserBean>() {
-            @Override
-            public void onSuccess(UserBean userBean) {
-                if (isAttached()) {
-                    getView().registerSuccess(userBean);
+    public void register(boolean isAvatarSet, File userAvatar, UserBean userBean) {
+        if (isAvatarSet) {
+            mBmobApiService.uploadPicRegister(userAvatar, userBean, new RequestCallback<UserBean>() {
+                @Override
+                public void onSuccess(UserBean userBean) {
+                    if (isAttached()) {
+                        getView().registerSuccess(userBean);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(String message) {
-                if (isAttached()) {
-                    getView().showError(message);
+                @Override
+                public void onFailure(String message) {
+                    if (isAttached()) {
+                        getView().showError(message);
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            mBmobApiService.register(userBean, new RequestCallback<UserBean>() {
+                @Override
+                public void onSuccess(UserBean userBean) {
+                    if (isAttached()) {
+                        getView().registerSuccess(userBean);
+                    }
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    if (isAttached()) {
+                        getView().showError(message);
+                    }
+                }
+            });
+        }
     }
 
     public void uploadOrUpdateSessionToken(String username, String sessionToken) {
@@ -76,19 +100,19 @@ public class LoginRegisterPresenter extends BasePresenter<LoginRegisterView> {
         });
     }
 
-    public UserInfo readUserInfo(){
+    public UserInfo readUserInfo() {
         return mUserPreference.readUserInfo();
     }
 
-    public void saveUserInfo(UserInfo userInfo){
+    public void saveUserInfo(UserInfo userInfo) {
         mUserPreference.saveUserInfo(userInfo);
     }
 
-    public void saveSessionToken(String sessionToken){
+    public void saveSessionToken(String sessionToken) {
         mUserPreference.saveSessionToken(sessionToken);
     }
 
-    public void saveUserHeader(String url){
+    public void saveUserHeader(String url) {
         mUserPreference.saveUserHeader(url);
     }
 }

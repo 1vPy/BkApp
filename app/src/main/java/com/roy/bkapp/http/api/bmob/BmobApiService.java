@@ -369,7 +369,51 @@ public class BmobApiService {
         return result.toString();
     }
 
-    public void uploadPic(String s, RequestCallback<String> rc) {
+    public void uploadPicRegister(File file,UserBean userBean,RequestCallback<UserBean> requestCallback){
+        LogUtils.log(TAG, file.getAbsolutePath(), LogUtils.DEBUG);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/octet-stream"), image2byte(file.getAbsolutePath()));
+        mBmobApi.uploadPic(file.getName(), requestBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(throwable -> requestCallback.onFailure("头像设置失败"))
+                .observeOn(Schedulers.io())
+                .concatMap(new Function<Response<ResponseBody>, ObservableSource<Response<ResponseBody>>>() {
+                    @Override
+                    public ObservableSource<Response<ResponseBody>> apply(@NonNull Response<ResponseBody> responseBodyResponse) throws Exception {
+                        if (responseBodyResponse.isSuccessful()) {
+                            UploadImg uploadImg = JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), UploadImg.class);
+                            UserHeader userHeader = new UserHeader();
+                            userHeader.set_Type("File");
+                            userHeader.setCdn(uploadImg.getCdn());
+                            userHeader.setFilename(uploadImg.getFilename());
+                            userHeader.setUrl(uploadImg.getUrl());
+                            userBean.setUserHeader(userHeader);
+                        }
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), JsonUtils.JavaBean2Json(userBean));
+                        return mBmobApi.register(requestBody);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(responseBodyResponse -> {
+                    if (responseBodyResponse.isSuccessful()) {
+                        requestCallback.onSuccess(JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), UserBean.class));
+                    } else {
+                        switch (responseBodyResponse.code()) {
+                            case 404:
+                                requestCallback.onFailure(JsonUtils.Json2JavaBean(responseBodyResponse.errorBody().string(), ErrorBean.class).getError());
+                                break;
+                            default:
+                                requestCallback.onFailure("未知错误");
+                                break;
+                        }
+                    }
+                }, throwable -> {
+                    requestCallback.onFailure(throwable.getLocalizedMessage());
+                    LogUtils.log(TAG, throwable.getLocalizedMessage(), LogUtils.DEBUG);
+                });
+    }
+
+    public void modifyAvatar(String s, RequestCallback<String> rc) {
         RequestBody file = RequestBody.create(MediaType.parse("application/octet-stream"), image2byte(s));
         String filename = new File(s).getName();
         mBmobApi.uploadPic(filename, file)

@@ -2,9 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.roy.bkapp">
 
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
 
     <application
         android:name=".BkApplication"
@@ -16,10 +18,10 @@
 
         <meta-data
             android:name="sms_app_key"
-            android:value="f48c49b***" />
+            android:value="f48c49b37b60" />
         <meta-data
             android:name="sms_app_secret"
-            android:value="d953d34d33e672460174961e6368***" />
+            android:value="d953d34d33e672460174961e63687304" />
 
         <meta-data
             android:name="com.roy.bkapp.utils.GlideModuleSetting"
@@ -64,6 +66,20 @@
         <activity
             android:name=".ui.activity.movie.MovieRatingActivity"
             android:screenOrientation="sensorPortrait" />
+
+        <activity
+            android:name=".ui.activity.helper.ImagePickActivity"
+            android:screenOrientation="sensorPortrait" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.roy.bkapp.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
 
     </application>
 

@@ -1,5 +1,6 @@
 package com.roy.bkapp.presenter.user;
 
+import com.roy.bkapp.http.RequestCallback;
 import com.roy.bkapp.http.api.bmob.BmobApiService;
 import com.roy.bkapp.model.user.UserInfo;
 import com.roy.bkapp.presenter.BasePresenter;
@@ -44,6 +45,24 @@ public class UserCenterPresenter extends BasePresenter<UserCenterView>{
 
     public void clearUserInfo(){
         mUserPreference.clearUserInfo();
+    }
+
+    public void modifyAvatar(String path){
+        mBmobApiService.modifyAvatar(path, new RequestCallback<String>() {
+            @Override
+            public void onSuccess(String s) {
+                if(isAttached()){
+                    getView().modifyAvatarSuccess(s);
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                if(isAttached()){
+                    getView().showError(message);
+                }
+            }
+        });
     }
 
 }
