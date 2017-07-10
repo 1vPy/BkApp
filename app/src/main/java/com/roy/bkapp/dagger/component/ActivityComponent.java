@@ -1,5 +1,7 @@
 package com.roy.bkapp.dagger.component;
 
+import android.app.Activity;
+
 import com.roy.bkapp.dagger.module.ActivityModule;
 import com.roy.bkapp.dagger.scope.ActivityScope;
 import com.roy.bkapp.ui.activity.MainActivity;
@@ -19,6 +21,9 @@ import dagger.Component;
 @ActivityScope
 @Component(dependencies = AppComponent.class, modules = {ActivityModule.class})
 public interface ActivityComponent {
+
+    Activity provideActivity();
+
     void inject(MainActivity activity);
 
     void inject(MovieDetailActivity activity);

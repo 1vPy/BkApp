@@ -143,12 +143,10 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
         mPresenter.saveSessionToken(userBean.getSessionToken());
         mPresenter.uploadOrUpdateSessionToken(userBean.getUsername(), userBean.getSessionToken());
         if (userBean.getUserHeader() != null) {
-            BkKit.getUserAvatarListener().login(userBean.getUserHeader().getUrl());
             mPresenter.saveUserHeader(userBean.getUserHeader().getUrl());
-        } else {
-            BkKit.getUserAvatarListener().login("");
         }
-        SnackBarUtils.LongSnackbar(view_login_register, getString(R.string.login_success) + "：" + userBean.getUsername(), SnackBarUtils.Info).show();
+        BkKit.getUserAvatarListener().login();
+        ToastUtils.showToast(getString(R.string.login_success) + "：" + userBean.getUsername());
         UserCenterActivity.start(this);
         this.finish();
     }
@@ -368,6 +366,9 @@ public class LoginRegisterActivity extends BaseSwipeBackActivity<LoginRegisterVi
         }
     };
 
+    /**
+     * 弹出设置头像的dialog
+     */
     private void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("设置头像");

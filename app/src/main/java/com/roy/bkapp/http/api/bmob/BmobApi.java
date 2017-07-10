@@ -7,6 +7,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -136,6 +137,40 @@ public interface BmobApi {
     @Headers({"X-Bmob-Application-Id:" + Constants.application_id, "X-Bmob-REST-API-Key:" + Constants.application_key, "Content-Type:application/json"})
     @POST("1/classes/Movie_Comment")
     Observable<Response<ResponseBody>> addComment(@Body RequestBody body);
+
+
+    /**
+     * 同步收藏
+     *
+     * @param body
+     * @return
+     */
+    @Headers({"X-Bmob-Application-Id:" + Constants.application_id, "X-Bmob-REST-API-Key:" + Constants.application_key, "Content-Type:application/json"})
+    @POST("1/classes/Movie_Collection")
+    Observable<Response<ResponseBody>> syncCollection(@Body RequestBody body);
+
+    /**
+     * 查询云收藏
+     *
+     * @param json
+     * @return
+     */
+    @Headers({"X-Bmob-Application-Id:" + Constants.application_id, "X-Bmob-REST-API-Key:" + Constants.application_key, "Content-Type:application/json"})
+    @GET("1/classes/Movie_Collection")
+    Observable<Response<ResponseBody>> searchCloudCollection(@Query("where") String json);
+
+    /**
+     * 删除云收藏
+     *
+     * @param objectId
+     * @return
+     */
+    @Headers({"X-Bmob-Application-Id:" + Constants.application_id, "X-Bmob-REST-API-Key:" + Constants.application_key, "Content-Type:application/json"})
+    @DELETE("1/classes/Movie_Collection/{objectId}")
+    Observable<Response<ResponseBody>> deleteCloudCollection(@Path("objectId") String objectId);
+
+
+
 
     /**
      * 上传异常文件

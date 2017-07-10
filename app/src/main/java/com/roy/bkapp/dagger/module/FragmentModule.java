@@ -1,6 +1,9 @@
 package com.roy.bkapp.dagger.module;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
+
+import com.roy.bkapp.dagger.scope.FragmentScope;
 
 import dagger.Module;
 import dagger.Provides;
@@ -18,8 +21,9 @@ public class FragmentModule {
         mFragment = fragment;
     }
 
+    @FragmentScope
     @Provides
-    public Fragment provideFragment(){
-        return mFragment;
+    public Activity provideFragment(){
+        return mFragment.getActivity();
     }
 }

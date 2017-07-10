@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.kyleduo.switchbutton.SwitchButton;
 import com.roy.bkapp.BkKit;
 import com.roy.bkapp.R;
+import com.roy.bkapp.model.collection.MovieCollection;
 import com.roy.bkapp.presenter.user.UserCenterPresenter;
 import com.roy.bkapp.ui.activity.BaseSwipeBackActivity;
 import com.roy.bkapp.ui.activity.helper.ImagePickActivity;
@@ -34,6 +35,7 @@ import com.roy.bkapp.utils.UserPreference;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -71,6 +73,8 @@ public class UserCenterActivity extends BaseSwipeBackActivity<UserCenterView, Us
     TextView disk_cache;
     @BindView(R.id.cache_clear)
     LinearLayout cache_clear;
+    @BindView(R.id.cloud_collection_num)
+    TextView cloud_collection_num;
 
     private String path = Environment.getExternalStorageDirectory() + "/Android/data/com.roy.bkapp/";
     private File mCropFile = new File(path, "Crop.jpg");//裁剪后的File对象
@@ -116,6 +120,8 @@ public class UserCenterActivity extends BaseSwipeBackActivity<UserCenterView, Us
 
         disk_cache.setText(ImageUtils.getCacheSize());
 
+        sbtn_sync.setChecked(mPresenter.readIsSync());
+
         dialog = new ProgressDialog(this);
 
         btn_logout.setOnClickListener(this);
@@ -123,6 +129,8 @@ public class UserCenterActivity extends BaseSwipeBackActivity<UserCenterView, Us
         sbtn_msg.setOnCheckedChangeListener(this);
         sbtn_sync.setOnCheckedChangeListener(this);
         cache_clear.setOnClickListener(this);
+
+        mPresenter.searchCloudCollectionNum();
 
     }
 
@@ -164,9 +172,22 @@ public class UserCenterActivity extends BaseSwipeBackActivity<UserCenterView, Us
                 break;
             case R.id.sbtn_sync:
                 if (isChecked) {
-                    ToastUtils.showToast(R.string.collection_sync_open);
+                    new AlertDialog.Builder(this)
+                            .setTitle("提示")
+                            .setMessage("开启此功能后，您的收藏与删除都会同步到云端")
+                            .setNegativeButton("确定开启", (dialog1, which) -> {
+                                mPresenter.syncCollection(mPresenter.getLocalMovieCollection());
+                                mPresenter.saveIsSync(true);
+                                ToastUtils.showToast(R.string.collection_sync_open);
+                            })
+                            .setPositiveButton("取消开启", (dialog12, which) -> {
+                                sbtn_sync.setChecked(false);
+                                dialog12.dismiss();
+                            })
+                            .show();
                 } else {
-                    ToastUtils.showToast(R.string.collection_sync_open);
+                    ToastUtils.showToast(R.string.collection_sync_close);
+                    mPresenter.saveIsSync(false);
                 }
                 break;
         }
@@ -213,6 +234,16 @@ public class UserCenterActivity extends BaseSwipeBackActivity<UserCenterView, Us
         }
         BkKit.getUserAvatarListener().uploadAvatar(mPresenter.readUserHeader());
         dialog.dismiss();
+    }
+
+    @Override
+    public void syncCollectionSuccess(String s) {
+        ToastUtils.showLongToast(s);
+    }
+
+    @Override
+    public void searchNumSuccess(Integer integer) {
+        cloud_collection_num.setText(integer+"条");
     }
 
 }

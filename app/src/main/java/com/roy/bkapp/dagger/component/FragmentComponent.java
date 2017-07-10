@@ -1,5 +1,6 @@
 package com.roy.bkapp.dagger.component;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 
 import com.roy.bkapp.dagger.module.FragmentModule;
@@ -17,6 +18,8 @@ import dagger.Component;
 @FragmentScope
 @Component(dependencies = {AppComponent.class},modules = {FragmentModule.class})
 public interface FragmentComponent {
+
+    Activity provideActivity();
 
     void inject(MovieHotFragment fragment);
 

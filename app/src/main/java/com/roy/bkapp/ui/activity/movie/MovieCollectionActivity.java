@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -82,10 +83,13 @@ public class MovieCollectionActivity extends BaseSwipeBackActivity<MovieCollecti
     protected void initViewAndEvent() {
         mToolbar.setTitle(R.string.movie_collection);
         mToolbar.setNavigationOnClickListener(v -> this.finish());
-        ryv_collection.setLayoutManager(new LinearLayoutManager(this));
+        ryv_collection.setLayoutManager(new GridLayoutManager(this,3));
         mMovieCollectionAdapter = new MovieCollectionAdapter(R.layout.item_collection, mMovieCollectionList);
         ryv_collection.setAdapter(mMovieCollectionAdapter);
-        mPresenter.selectAllCollection();
+
+        mMovieCollectionList.addAll(mPresenter.selectAllCollection());
+
+        mMovieCollectionAdapter.notifyDataSetChanged();
         mMovieCollectionAdapter.setOnItemClickListener(this);
         mMovieCollectionAdapter.setOnItemLongClickListener(this);
         fab_back_top.setOnClickListener(this);
@@ -131,17 +135,6 @@ public class MovieCollectionActivity extends BaseSwipeBackActivity<MovieCollecti
         }
     }
 
-    @Override
-    public void movieCollection(List<MovieCollection> movieCollectionList) {
-        mMovieCollectionList.addAll(movieCollectionList);
-        mMovieCollectionAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void deleteSuccess(String s) {
-        SnackBarUtils.LongSnackbar(cdl_root, s, SnackBarUtils.Info).show();
-        mMovieCollectionAdapter.notifyDataSetChanged();
-    }
 
     @Override
     public void showError(String message) {
@@ -192,6 +185,10 @@ public class MovieCollectionActivity extends BaseSwipeBackActivity<MovieCollecti
                 case 0:
                     LogUtils.log(TAG, "p:" + position, LogUtils.DEBUG);
                     mPresenter.deleteCollection(mMovieCollectionList.get(position).getMovieId());
+
+                    SnackBarUtils.LongSnackbar(cdl_root,"收藏已删除", SnackBarUtils.Info).show();
+                    mMovieCollectionAdapter.notifyDataSetChanged();
+
                     mMovieCollectionList.remove(position);
                     dialog.dismiss();
                     break;

@@ -1,17 +1,22 @@
 package com.roy.bkapp.ui.activity;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -42,13 +47,15 @@ import com.roy.bkapp.ui.listener.UserAvatarListener;
 import com.roy.bkapp.ui.view.MainView;
 import com.roy.bkapp.utils.ImageUtils;
 import com.roy.bkapp.utils.SnackBarUtils;
-import com.roy.bkapp.utils.UserPreference;
+import com.roy.bkapp.utils.ToastUtils;
 
-import java.lang.reflect.Field;
+import java.security.Permission;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
-public class MainActivity extends BaseActivity<MainView,MainPresenter> implements NavigationView.OnNavigationItemSelectedListener
+public class MainActivity extends BaseActivity<MainView, MainPresenter> implements NavigationView.OnNavigationItemSelectedListener
         , View.OnClickListener
         , UserAvatarListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -80,12 +87,47 @@ public class MainActivity extends BaseActivity<MainView,MainPresenter> implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startCheckPermission();
         initLogin();
     }
 
     @Override
     protected void initInject() {
         getActivityComponent().inject(this);
+    }
+
+    private void startCheckPermission() {
+        List<String> requestPermissionList = new ArrayList<>();
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            requestPermissionList.add(Manifest.permission.CAMERA);
+        }
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED){
+            requestPermissionList.add(Manifest.permission.RECEIVE_SMS);
+        }
+
+        if(requestPermissionList.size()>0){
+            ActivityCompat.requestPermissions(this,
+                    requestPermissionList.toArray(new String[requestPermissionList.size()]),100);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == 100){
+           for(int i : grantResults){
+               if(i != PackageManager.PERMISSION_GRANTED){
+                   ToastUtils.showToast("拒绝某些权限可能导致程序异常");
+               }
+           }
+        }
     }
 
     public void initLogin() {
@@ -109,7 +151,7 @@ public class MainActivity extends BaseActivity<MainView,MainPresenter> implement
                                 if (mPresenter.readUserHeader().length() <= 0) {
                                     ImageUtils.displayImage(MainActivity.this, R.drawable.avatar_default, user_login);
                                 } else {
-                                    ImageUtils.displayImage(MainActivity.this,mPresenter.readUserHeader(), user_login);
+                                    ImageUtils.displayImage(MainActivity.this, mPresenter.readUserHeader(), user_login);
                                 }
                             }
                         }
@@ -297,10 +339,10 @@ public class MainActivity extends BaseActivity<MainView,MainPresenter> implement
     }
 
     @Override
-    public void login(String headerUrl) {
+    public void login() {
         user_name.setText(mPresenter.readUserInfo().getUsername());
-        if (!headerUrl.isEmpty()) {
-            ImageUtils.displayImage(this, headerUrl, user_login);
+        if (!mPresenter.readUserHeader().isEmpty()) {
+            ImageUtils.displayImage(this, mPresenter.readUserHeader(), user_login);
         } else {
             ImageUtils.displayImage(this, R.drawable.avatar_default, user_login);
         }

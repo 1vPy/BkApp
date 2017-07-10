@@ -1,9 +1,13 @@
 package com.roy.bkapp.http.api.bmob;
 
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.roy.bkapp.BkKit;
 import com.roy.bkapp.http.RequestCallback;
+import com.roy.bkapp.model.collection.MovieCloudCollection;
+import com.roy.bkapp.model.collection.MovieCloudResult;
+import com.roy.bkapp.model.collection.MovieCollection;
 import com.roy.bkapp.model.user.ErrorBean;
 import com.roy.bkapp.model.user.UploadImg;
 import com.roy.bkapp.model.user.UserBean;
@@ -26,10 +30,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -49,13 +56,13 @@ public class BmobApiService {
 
     private UserPreference mUserPreference;
 
-    public BmobApiService(BmobApi bmobApi,UserPreference userPreference) {
+    public BmobApiService(BmobApi bmobApi, UserPreference userPreference) {
         mBmobApi = bmobApi;
         mUserPreference = userPreference;
     }
 
 
-    public void loginConfig(String username,RequestCallback<LoginConfig> requestCallback){
+    public void loginConfig(String username, RequestCallback<LoginConfig> requestCallback) {
         UserBean userBean = new UserBean();
         userBean.setUsername(username);
         String json = JsonUtils.JavaBean2Json(userBean);
@@ -63,9 +70,9 @@ public class BmobApiService {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(responseBodyResponse -> {
-                    if(responseBodyResponse.isSuccessful()){
-                        requestCallback.onSuccess(JsonUtils.Json2JavaBean(responseBodyResponse.body().string(),LoginConfig.class));
-                    }else {
+                    if (responseBodyResponse.isSuccessful()) {
+                        requestCallback.onSuccess(JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), LoginConfig.class));
+                    } else {
                         switch (responseBodyResponse.code()) {
                             case 404:
                                 requestCallback.onFailure(JsonUtils.Json2JavaBean(responseBodyResponse.errorBody().string(), ErrorBean.class).getError());
@@ -75,7 +82,7 @@ public class BmobApiService {
                                 break;
                         }
                     }
-                },throwable -> throwable.getLocalizedMessage());
+                }, throwable -> throwable.getLocalizedMessage());
     }
 
     public void login(String username, String password, RequestCallback<UserBean> rc) {
@@ -99,7 +106,7 @@ public class BmobApiService {
                 }, throwable -> rc.onFailure(throwable.getLocalizedMessage()));
     }
 
-    public void uploadOrUpdateSessionToken(String username,String sessionToken,RequestCallback<String> rc){
+    public void uploadOrUpdateSessionToken(String username, String sessionToken, RequestCallback<String> rc) {
         UserBean userBean = new UserBean();
         userBean.setUsername(username);
         String json = JsonUtils.JavaBean2Json(userBean);
@@ -109,14 +116,14 @@ public class BmobApiService {
                 .concatMap(new Function<Response<ResponseBody>, ObservableSource<Response<ResponseBody>>>() {
                     @Override
                     public ObservableSource<Response<ResponseBody>> apply(@NonNull Response<ResponseBody> responseBodyResponse) throws Exception {
-                        if(responseBodyResponse.isSuccessful()){
-                            LoginConfig l = JsonUtils.Json2JavaBean(responseBodyResponse.body().string(),LoginConfig.class);
-                            if(l.getResults().size()>0){
+                        if (responseBodyResponse.isSuccessful()) {
+                            LoginConfig l = JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), LoginConfig.class);
+                            if (l.getResults().size() > 0) {
                                 UserBean u = new UserBean();
                                 u.setSessionToken(sessionToken);
                                 RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), JsonUtils.JavaBean2Json(u));
-                                return mBmobApi.updateSessionToken(JsonUtils.JavaBean2Json(userBean),requestBody);
-                            }else{
+                                return mBmobApi.updateSessionToken(JsonUtils.JavaBean2Json(userBean), requestBody);
+                            } else {
                                 UserBean u = new UserBean();
                                 u.setUsername(username);
                                 u.setSessionToken(sessionToken);
@@ -128,7 +135,7 @@ public class BmobApiService {
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(responseBodyResponse ->{
+                .subscribe(responseBodyResponse -> {
                     LogUtils.log(TAG, "code:" + responseBodyResponse.code(), LogUtils.DEBUG);
                     if (responseBodyResponse.isSuccessful()) {
                         rc.onSuccess("ss");
@@ -369,7 +376,7 @@ public class BmobApiService {
         return result.toString();
     }
 
-    public void uploadPicRegister(File file,UserBean userBean,RequestCallback<UserBean> requestCallback){
+    public void uploadPicRegister(File file, UserBean userBean, RequestCallback<UserBean> requestCallback) {
         LogUtils.log(TAG, file.getAbsolutePath(), LogUtils.DEBUG);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/octet-stream"), image2byte(file.getAbsolutePath()));
         mBmobApi.uploadPic(file.getName(), requestBody)
@@ -437,7 +444,7 @@ public class BmobApiService {
                         userHeader.setCdn(uploadImg.getCdn());
                         userHeader.setUrl(uploadImg.getUrl());
                         userBean.setUserHeader(userHeader);
-                        LogUtils.log(TAG, "getSessionToken:" + mUserPreference.readSessionToken() + ",objectId:"+mUserPreference.readUserInfo().getObjectId()+",json:" + JsonUtils.JavaBean2Json(userBean), LogUtils.DEBUG);
+                        LogUtils.log(TAG, "getSessionToken:" + mUserPreference.readSessionToken() + ",objectId:" + mUserPreference.readUserInfo().getObjectId() + ",json:" + JsonUtils.JavaBean2Json(userBean), LogUtils.DEBUG);
                         RequestBody r = RequestBody.create(MediaType.parse("application/json"), JsonUtils.JavaBean2Json(userBean));
                         return mBmobApi.updateUser(mUserPreference.readSessionToken(), mUserPreference.readUserInfo().getObjectId(), r);
                     }
@@ -472,5 +479,96 @@ public class BmobApiService {
             ex1.printStackTrace();
         }
         return data;
+    }
+
+    public void syncCollection(List<MovieCollection> collectionList, RequestCallback<String> requestCallback) {
+        for (MovieCollection collection : collectionList) {
+            MovieCloudResult movieCloudResult = new MovieCloudResult();
+            movieCloudResult.setUsername(mUserPreference.readUserInfo().getUsername());
+            movieCloudResult.setMovieId(collection.getMovieId());
+            LogUtils.log(TAG,"json:"+JsonUtils.JavaBean2Json(movieCloudResult),LogUtils.DEBUG);
+            mBmobApi.searchCloudCollection(JsonUtils.JavaBean2Json(movieCloudResult))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .concatMap(new Function<Response<ResponseBody>, ObservableSource<Response<ResponseBody>>>() {
+                        @Override
+                        public ObservableSource<Response<ResponseBody>> apply(@NonNull Response<ResponseBody> responseBodyResponse) throws Exception {
+                            if (responseBodyResponse.isSuccessful()) {
+                                if (JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), MovieCloudCollection.class).getResults().size() > 0) {
+                                    return null;
+                                }
+                            }
+                            movieCloudResult.setMovieName(collection.getMovieName());
+                            movieCloudResult.setImageUrl(collection.getImageUrl());
+                            RequestBody r = RequestBody.create(MediaType.parse("application/json"), JsonUtils.JavaBean2Json(movieCloudResult));
+                            return mBmobApi.syncCollection(r);
+                        }
+                    })
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(responseBodyResponse -> {
+                        if (responseBodyResponse.isSuccessful()) {
+                            requestCallback.onSuccess(collection.getMovieId());
+                        } else {
+                            requestCallback.onFailure("Failed");
+                        }
+                    }, throwable -> {
+                        LogUtils.log(TAG,throwable.getLocalizedMessage(),LogUtils.DEBUG);
+                        if(TextUtils.equals("The mapper returned a null ObservableSource",throwable.getLocalizedMessage())){
+                            requestCallback.onSuccess(collection.getMovieId());
+                        }else{
+                            requestCallback.onFailure("Failed");
+                        }
+                    });
+        }
+
+    }
+
+    public void deleteCloudCollection(String movieId ,RequestCallback<String> requestCallback){
+            MovieCloudResult movieCloudResult = new MovieCloudResult();
+            movieCloudResult.setUsername(mUserPreference.readUserInfo().getUsername());
+            movieCloudResult.setMovieId(movieId);
+            LogUtils.log(TAG,"json:"+JsonUtils.JavaBean2Json(movieCloudResult),LogUtils.DEBUG);
+            mBmobApi.searchCloudCollection(JsonUtils.JavaBean2Json(movieCloudResult))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .concatMap(new Function<Response<ResponseBody>, ObservableSource<Response<ResponseBody>>>() {
+                        @Override
+                        public ObservableSource<Response<ResponseBody>> apply(@NonNull Response<ResponseBody> responseBodyResponse) throws Exception {
+                            LogUtils.log(TAG,"1",LogUtils.DEBUG);
+                            if (responseBodyResponse.isSuccessful()) {
+                                LogUtils.log(TAG,"2",LogUtils.DEBUG);
+                                MovieCloudCollection movieCloudCollection = JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), MovieCloudCollection.class);
+                                if (movieCloudCollection.getResults().size() <= 0) {
+                                    LogUtils.log(TAG,"3",LogUtils.DEBUG);
+                                    return null;
+                                }
+                                return mBmobApi.deleteCloudCollection(movieCloudCollection.getResults().get(0).getObjectId());
+                            }
+                            return null;
+                        }
+                    })
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(responseBodyResponse -> requestCallback.onSuccess("云端删除成功"),throwable -> {
+                        LogUtils.log(TAG,throwable.getLocalizedMessage(),LogUtils.DEBUG);
+                        if(TextUtils.equals("The mapper returned a null ObservableSource",throwable.getLocalizedMessage())){
+                            requestCallback.onSuccess("云端删除成功");
+                        }else{
+                            requestCallback.onFailure("云端删除失败");
+                        }
+                    });
+    }
+
+    public void searchCloudCollectionNum(RequestCallback<Integer> requestCallback){
+        MovieCloudResult movieCloudResult = new MovieCloudResult();
+        movieCloudResult.setUsername(mUserPreference.readUserInfo().getUsername());
+        LogUtils.log(TAG,"json:"+JsonUtils.JavaBean2Json(movieCloudResult),LogUtils.DEBUG);
+        mBmobApi.searchCloudCollection(JsonUtils.JavaBean2Json(movieCloudResult))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(responseBodyResponse -> {
+                    if (responseBodyResponse.isSuccessful()) {
+                            requestCallback.onSuccess(JsonUtils.Json2JavaBean(responseBodyResponse.body().string(), MovieCloudCollection.class).getResults().size());
+                    }
+                },throwable -> requestCallback.onFailure(throwable.getLocalizedMessage()));
     }
 }

@@ -152,7 +152,7 @@
                         android:id="@+id/cloud_collection_num"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="32条" />
+                        android:text="查询失败" />
 
                 </LinearLayout>
             </LinearLayout>

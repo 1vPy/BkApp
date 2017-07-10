@@ -1,6 +1,5 @@
 package com.roy.bkapp.http.api.baidu;
 
-import com.roy.bkapp.BkKit;
 import com.roy.bkapp.http.RequestCallback;
 import com.roy.bkapp.model.music.billcategory.JsonMusicBillBean;
 import com.roy.bkapp.model.music.billlist.JsonSongListBean;
@@ -9,18 +8,8 @@ import com.roy.bkapp.model.music.search.JsonSearchBean;
 import com.roy.bkapp.utils.AESTools;
 import com.roy.bkapp.utils.LogUtils;
 
-import java.io.File;
-import java.util.concurrent.TimeUnit;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by 1vPy(Roy) on 2017/4/13.

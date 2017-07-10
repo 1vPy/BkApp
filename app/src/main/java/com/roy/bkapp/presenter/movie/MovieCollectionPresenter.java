@@ -23,40 +23,12 @@ public class MovieCollectionPresenter extends BasePresenter<MovieCollectionView>
         mDbHelperService = dbHelperService;
     }
 
-    public void selectAllCollection(){
-        mDbHelperService.selectAllCollection(new RequestCallback<List<MovieCollection>>() {
-            @Override
-            public void onSuccess(List<MovieCollection> movieCollectionList) {
-                if(isAttached()){
-                    getView().movieCollection(movieCollectionList);
-                }
-            }
-
-            @Override
-            public void onFailure(String message) {
-                if(isAttached()){
-                    getView().showError(message);
-                }
-            }
-        });
+    public List<MovieCollection> selectAllCollection(){
+        return mDbHelperService.selectAllCollection();
     }
 
     public void deleteCollection(String movieId){
-        mDbHelperService.deleteCollection(movieId, new RequestCallback<String>() {
-            @Override
-            public void onSuccess(String s) {
-                if(isAttached()){
-                    getView().deleteSuccess(s);
-                }
-            }
-
-            @Override
-            public void onFailure(String message) {
-                if(isAttached()){
-                    getView().showError(message);
-                }
-            }
-        });
+        mDbHelperService.deleteCollection(movieId);
     }
 
 }

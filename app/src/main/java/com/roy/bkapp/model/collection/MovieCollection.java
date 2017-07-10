@@ -9,15 +9,17 @@ public class MovieCollection {
     private String imageUrl;
     private String movieName;
     private String movieId;
+    private Integer isSync;
 
     public MovieCollection() {
 
     }
 
-    public MovieCollection(String imageUrl, String movieName, String movieId) {
+    public MovieCollection(String imageUrl, String movieName, String movieId,Integer isSync) {
         this.imageUrl = imageUrl;
         this.movieName = movieName;
         this.movieId = movieId;
+        this.isSync = isSync;
     }
 
 
@@ -51,5 +53,13 @@ public class MovieCollection {
 
     public void setMovieId(String movieId) {
         this.movieId = movieId;
+    }
+
+    public Integer getIsSync() {
+        return isSync;
+    }
+
+    public void setIsSync(Integer isSync) {
+        this.isSync = isSync;
     }
 }

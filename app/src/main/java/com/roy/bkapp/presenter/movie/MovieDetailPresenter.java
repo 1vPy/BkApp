@@ -11,6 +11,9 @@ import com.roy.bkapp.presenter.BasePresenter;
 import com.roy.bkapp.ui.view.movie.MovieDetailView;
 import com.roy.bkapp.utils.UserPreference;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 /**
@@ -55,58 +58,19 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView>{
     }
 
     public void insertCollection(MovieCollection movieCollection){
-        mDbHelperService.insertCollection(movieCollection, new RequestCallback<String>() {
-            @Override
-            public void onSuccess(String s) {
-                if(isAttached()){
-                    getView().collectionSuccess(s);
-                }
-            }
-
-            @Override
-            public void onFailure(String message) {
-                if(isAttached()){
-                    getView().showError(message);
-                }
-            }
-        });
+        mDbHelperService.insertCollection(movieCollection);
     }
 
     public void deleteCollection(String id){
-        mDbHelperService.deleteCollection(id, new RequestCallback<String>() {
-            @Override
-            public void onSuccess(String s) {
-                if(isAttached()){
-                    getView().deleteSuccess(s);
-                }
-            }
-
-            @Override
-            public void onFailure(String message) {
-                if(isAttached()){
-                    getView().showError(message);
-                }
-            }
-        });
+        mDbHelperService.deleteCollection(id);
     }
 
-    public void isCollected(String id){
-        mDbHelperService.selectCollection(id,new RequestCallback<Boolean>(){
+    public boolean isCollected(String id){
+        return mDbHelperService.selectCollection(id);
+    }
 
-            @Override
-            public void onSuccess(Boolean aBoolean) {
-                if(isAttached()){
-                    getView().isCollected(aBoolean);
-                }
-            }
-
-            @Override
-            public void onFailure(String message) {
-                if(isAttached()){
-                    getView().isCollected(false);
-                }
-            }
-        });
+    public MovieCollection searchMovieCollection(String movieId){
+        return mDbHelperService.searchCollection(movieId);
     }
 
     public void praiseNum(String movieId){
@@ -183,5 +147,48 @@ public class MovieDetailPresenter extends BasePresenter<MovieDetailView>{
 
     public UserInfo readUserInfo(){
         return mUserPreference.readUserInfo();
+    }
+
+    public boolean readIsSync(){
+        return mUserPreference.readIsSync();
+    }
+
+    public void syncMovie(MovieCollection movieCollection){
+        List<MovieCollection> movieCollections = new ArrayList<>();
+        movieCollections.add(movieCollection);
+        mBmobApiService.syncCollection(movieCollections, new RequestCallback<String>() {
+            @Override
+            public void onSuccess(String s) {
+                mDbHelperService.toggleSyncMovie(s, true);
+                if(isAttached()){
+                    getView().syncSuccess("同步收藏成功");
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                if(isAttached()){
+                    getView().showError(message);
+                }
+            }
+        });
+    }
+
+    public void deleteCloudMovie(String movieId){
+        mBmobApiService.deleteCloudCollection(movieId, new RequestCallback<String>() {
+            @Override
+            public void onSuccess(String s) {
+                if(isAttached()){
+                    getView().deleteCloudSuccess(s);
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                if(isAttached()){
+                    getView().showError(message);
+                }
+            }
+        });
     }
 }

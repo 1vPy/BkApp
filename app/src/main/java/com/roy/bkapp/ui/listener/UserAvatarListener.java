@@ -5,7 +5,7 @@ package com.roy.bkapp.ui.listener;
  */
 
 public interface UserAvatarListener {
-    void login(String headerUrl);
+    void login();
 
     void logout();
 

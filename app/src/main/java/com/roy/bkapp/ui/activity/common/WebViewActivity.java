@@ -3,11 +3,8 @@ package com.roy.bkapp.ui.activity.common;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.View;
-import android.widget.Toast;
 
 import com.roy.bkapp.R;
-import com.roy.bkapp.ui.activity.BaseSwipeBackActivity;
 import com.roy.bkapp.ui.activity.RootActivity;
 import com.roy.bkapp.utils.BrowserLayout;
 import com.roy.bkapp.utils.ToastUtils;

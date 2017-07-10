@@ -12,7 +12,4 @@ import java.util.List;
 
 public interface MovieCollectionView extends BaseView{
 
-    void movieCollection(List<MovieCollection> movieCollectionList);
-
-    void deleteSuccess(String s);
 }

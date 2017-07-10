@@ -2,6 +2,8 @@ package com.roy.bkapp.dagger.module;
 
 import android.app.Activity;
 
+import com.roy.bkapp.dagger.scope.ActivityScope;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -18,6 +20,7 @@ public class ActivityModule {
         this.mActivity = activity;
     }
 
+    @ActivityScope
     @Provides
     public Activity provideActivity() {
         return mActivity;

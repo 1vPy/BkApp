@@ -32,147 +32,84 @@ public class DbHelperService {
         mDbHelper = dbHelper;
     }
 
-    public void insertCollection(final MovieCollection collection, final RequestCallback<String> requestCallback) {
-        Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> e) throws Exception {
-                try {
-                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
-                    db.beginTransaction();
-                    db.execSQL("insert into tb_collection values(null,?,?,?)", new Object[]{collection.getImageUrl(), collection.getMovieName(), collection.getMovieId()});
-                    db.setTransactionSuccessful();
-                    db.endTransaction();
-                    db.close();
-                    e.onNext("收藏成功");
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                    e.onError(e1);
-                }
-
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(@NonNull String s) throws Exception {
-                        requestCallback.onSuccess(s);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        requestCallback.onFailure("收藏失败：" + throwable.getLocalizedMessage());
-                    }
-                });
+    public void insertCollection(final MovieCollection collection) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.beginTransaction();
+        db.execSQL("insert into tb_collection values(null,?,?,?,?)", new Object[]{collection.getImageUrl(), collection.getMovieName(), collection.getMovieId(), collection.getIsSync()});
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
     }
 
-    public void deleteCollection(final String movieId, final RequestCallback<String> requestCallback) {
-        Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> e) throws Exception {
-                try {
-                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
-                    db.beginTransaction();
-                    db.execSQL("delete from tb_collection where movieId = ?", new Object[]{movieId});
-                    db.setTransactionSuccessful();
-                    db.endTransaction();
-                    db.close();
-                    e.onNext("删除成功");
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                    e.onError(e1);
-                }
-
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(@NonNull String s) throws Exception {
-                        requestCallback.onSuccess(s);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        requestCallback.onFailure("删除失败：" + throwable.getLocalizedMessage());
-                    }
-                });
+    public void deleteCollection(final String movieId) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.beginTransaction();
+        db.execSQL("delete from tb_collection where movieId = ?", new Object[]{movieId});
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
     }
 
-    public void selectCollection(final String movieId, final RequestCallback<Boolean> requestCallback) {
-        Observable.create(new ObservableOnSubscribe<Boolean>() {
-            @Override
-            public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-                try {
-                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
-                    Cursor cursor = db.rawQuery("select * from tb_collection where movieId = ?", new String[]{movieId});
-                    if (cursor.getCount() == 0) {
-                        e.onNext(false);
-                        e.onComplete();
-                    }
-                    cursor.close();
-                    db.close();
-                    e.onNext(true);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                    e.onError(e1);
-                }
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(@NonNull Boolean aBoolean) throws Exception {
-                        requestCallback.onSuccess(aBoolean);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        requestCallback.onFailure("查询失败：" + throwable.getLocalizedMessage());
-                    }
-                });
+    public boolean selectCollection(final String movieId) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from tb_collection where movieId = ?", new String[]{movieId});
+        if (cursor.getCount() == 0) {
+            return false;
+        }
+        cursor.close();
+        db.close();
+        return true;
+    }
+
+    public MovieCollection searchCollection(final String movieId) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        MovieCollection movieCollection = new MovieCollection();
+        Cursor cursor = db.rawQuery("select * from tb_collection where movieId = ?", new String[]{movieId});
+        while (cursor.moveToNext()) {
+            movieCollection.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            movieCollection.setImageUrl(cursor.getString(cursor.getColumnIndex("imageUrl")));
+            movieCollection.setMovieName(cursor.getString(cursor.getColumnIndex("movieName")));
+            movieCollection.setMovieId(cursor.getString(cursor.getColumnIndex("movieId")));
+            movieCollection.setIsSync(cursor.getInt(cursor.getColumnIndex("isSync")));
+        }
+        cursor.close();
+        db.close();
+        return movieCollection;
     }
 
 
-    public void selectAllCollection(final RequestCallback<List<MovieCollection>> requestCallback) {
-        Observable.create(new ObservableOnSubscribe<List<MovieCollection>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<MovieCollection>> e) throws Exception {
-                List<MovieCollection> movieCollectionList = new ArrayList<>();
-                try {
-                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
-                    Cursor cursor = db.rawQuery("select * from tb_collection", null);
-                    if (cursor.getCount() == 0) {
-                        e.onError(new Throwable("没有数据"));
-                        return;
-                    }
-                    while (cursor.moveToNext()) {
-                        MovieCollection movieCollection = new MovieCollection();
-                        movieCollection.setId(cursor.getInt(cursor.getColumnIndex("id")));
-                        movieCollection.setImageUrl(cursor.getString(cursor.getColumnIndex("imageUrl")));
-                        movieCollection.setMovieName(cursor.getString(cursor.getColumnIndex("movieName")));
-                        movieCollection.setMovieId(cursor.getString(cursor.getColumnIndex("movieId")));
-                        movieCollectionList.add(movieCollection);
-                    }
-                    cursor.close();
-                    db.close();
-                    e.onNext(movieCollectionList);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                    e.onError(e1);
-                }
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<MovieCollection>>() {
-                    @Override
-                    public void accept(@NonNull List<MovieCollection> movieCollections) throws Exception {
-                        requestCallback.onSuccess(movieCollections);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        requestCallback.onFailure(throwable.getLocalizedMessage());
-                    }
-                });
+    public List<MovieCollection> selectAllCollection() {
+        List<MovieCollection> movieCollectionList = new ArrayList<>();
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from tb_collection", null);
+        while (cursor.moveToNext()) {
+            MovieCollection movieCollection = new MovieCollection();
+            movieCollection.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            movieCollection.setImageUrl(cursor.getString(cursor.getColumnIndex("imageUrl")));
+            movieCollection.setMovieName(cursor.getString(cursor.getColumnIndex("movieName")));
+            movieCollection.setMovieId(cursor.getString(cursor.getColumnIndex("movieId")));
+            movieCollection.setIsSync(cursor.getInt(cursor.getColumnIndex("isSync")));
+            movieCollectionList.add(movieCollection);
+        }
+        cursor.close();
+        db.close();
+        return movieCollectionList;
+    }
+
+
+    public void toggleSyncMovie(String movieId, boolean isSync) {
+        if (isSync) {
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            db.beginTransaction();
+            db.execSQL("update tb_collection set isSync = 1 where movieId = ?", new Object[]{movieId});
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } else {
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            db.beginTransaction();
+            db.execSQL("update tb_collection set isSync = 0 where movieId = ?", new Object[]{movieId});
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        }
     }
 }

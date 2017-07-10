@@ -72,6 +72,15 @@ public class UserPreference {
         return preferences.getString("sessionToken", "");
     }
 
+    public void saveIsSync(boolean isSync) {
+        editor.putBoolean("isSync", isSync);
+        editor.commit();
+    }
+
+    public boolean readIsSync() {
+        return preferences.getBoolean("isSync", false);
+    }
+
     public void clearUserInfo() {
         editor.clear();
         editor.commit();

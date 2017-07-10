@@ -2,6 +2,7 @@ package com.roy.bkapp.ui.activity.movie;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -126,7 +128,7 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     @Override
     protected void onResume() {
         super.onResume();
-        if(mId != null){
+        if (mId != null) {
             mPresenter.commentNum(mId);
         }
     }
@@ -153,7 +155,12 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         }
         if (mId != null) {
             mPresenter.getMovieDetail(mId);
-            mPresenter.isCollected(mId);
+            isCollected = mPresenter.isCollected(mId);
+            if (isCollected) {
+                fab_collection.setSelected(true);
+            } else {
+                fab_collection.setSelected(false);
+            }
             mPresenter.praiseNum(mId);
             if (mPresenter.readUserInfo() != null) {
                 tv_detail_bottom_praise.setEnabled(false);
@@ -232,6 +239,7 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
 
     /**
      * 导演、演员合并为一个list
+     *
      * @param jsonDetailBean
      */
     private void initDirectorActorList(JsonDetailBean jsonDetailBean) {
@@ -263,32 +271,6 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
         initData(jsonDetailBean);
     }
 
-    @Override
-    public void collectionSuccess(String s) {
-        fab_collection.setSelected(true);
-        isCollected = true;
-        SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.collect_success), SnackBarUtils.Info).show();
-    }
-
-    @Override
-    public void deleteSuccess(String s) {
-        fab_collection.setSelected(false);
-        isCollected = false;
-        SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.collect_delete), SnackBarUtils.Info).show();
-    }
-
-
-    @Override
-    public void isCollected(boolean b) {
-        isCollected = b;
-        if (b) {
-            //mPresenter.deleteCollection(mId);
-            fab_collection.setSelected(true);
-        } else {
-            //mPresenter.insertCollection(mId);
-            fab_collection.setSelected(false);
-        }
-    }
 
     @Override
     public void isPraise(boolean b) {
@@ -324,6 +306,16 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     }
 
     @Override
+    public void syncSuccess(String s) {
+        SnackBarUtils.LongSnackbar(cdl_root, s, SnackBarUtils.Info).show();
+    }
+
+    @Override
+    public void deleteCloudSuccess(String s) {
+        SnackBarUtils.LongSnackbar(cdl_root, s, SnackBarUtils.Info).show();
+    }
+
+    @Override
     public void showError(String message) {
         onError();
         SnackBarUtils.LongSnackbar(cdl_root, message, SnackBarUtils.Warning).show();
@@ -355,11 +347,28 @@ public class MovieDetailActivity extends BaseSwipeBackActivity<MovieDetailView, 
     }
 
     private void collection() {
-        if (isCollected)
+        if (isCollected) {
+            if (mPresenter.readUserInfo() != null && mPresenter.readIsSync() && mPresenter.searchMovieCollection(mId).getIsSync() == 1) {
+                mPresenter.deleteCloudMovie(mId);
+            }
+
             mPresenter.deleteCollection(mId);
-        else {
-            MovieCollection collection = new MovieCollection(mJsonDetailBean.getImages().getLarge(), mJsonDetailBean.getTitle(), mJsonDetailBean.getId());
+
+            fab_collection.setSelected(false);
+            isCollected = false;
+            SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.collect_delete), SnackBarUtils.Info).show();
+
+        } else {
+            MovieCollection collection = new MovieCollection(mJsonDetailBean.getImages().getLarge(), mJsonDetailBean.getTitle(), mJsonDetailBean.getId(), 0);
             mPresenter.insertCollection(collection);
+
+            fab_collection.setSelected(true);
+            isCollected = true;
+            SnackBarUtils.LongSnackbar(cdl_root, getString(R.string.collect_success), SnackBarUtils.Info).show();
+
+            if (mPresenter.readUserInfo() != null && mPresenter.readIsSync()) {
+                mPresenter.syncMovie(collection);
+            }
         }
     }
 

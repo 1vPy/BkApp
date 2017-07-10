@@ -25,10 +25,15 @@ public class MovieCollectionAdapter extends BaseQuickAdapter<MovieCollection, Ba
     @Override
     protected void convert(BaseViewHolder helper, MovieCollection item) {
         ViewGroup.LayoutParams params = helper.getView(R.id.iv_movie).getLayoutParams();
-        params.width = (ScreenUtils.getScreenWidthDp(mContext) - ScreenUtils.dipToPx(mContext, 80)) / 3;
+        params.width = (ScreenUtils.getScreenWidthDp(mContext)) / 3;
         params.height = (int) ((420.0 / 300.0) * params.width);
         helper.getView(R.id.iv_movie).setLayoutParams(params);
         ImageUtils.displayImage(mContext,item.getImageUrl(),(ImageView) helper.getView(R.id.iv_movie));
         helper.setText(R.id.tv_name,item.getMovieName());
+        if(item.getIsSync() >0){
+            helper.setVisible(R.id.iv_sync,true);
+        }else{
+            helper.setVisible(R.id.iv_sync,false);
+        }
     }
 }
